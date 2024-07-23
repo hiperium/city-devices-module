@@ -1,0 +1,31 @@
+#####################################################################################
+############################# Stage 1: Builder Image ################################
+#####################################################################################
+FROM amazoncorretto:21-alpine-jdk as builder
+
+WORKDIR /workspace
+RUN apk add --no-cache zip unzip
+
+COPY city-devices-update-function/pom.xml         city-devices-update-function/pom.xml
+RUN  mvn dependency:go-offline -B -f              city-devices-update-function/pom.xml
+COPY city-devices-update-function/src             city-devices-update-function/src
+COPY city-devices-update-function/tools/assembly  city-devices-update-function/tools/assembly
+
+RUN mvn -T 4C clean package -DskipTests -f city-devices-update-function/pom.xml -Ddependency-check.skip=true && \
+    mkdir -p city-devices-update-function/target/extracted                                                   && \
+    (cd city-devices-update-function/target; unzip jar-assembly.zip -d extracted)                            && \
+    (cd city-devices-update-function/target/dependencies; zip -r ../dependencies.zip .)
+
+#####################################################################################
+############################ Stage 2: Application Image #############################
+#####################################################################################
+FROM public.ecr.aws/lambda/java:21-arm64
+
+ARG TARGET=/workspace/city-devices-update-function/target
+
+COPY --from=builder ${TARGET}/extracted         ${LAMBDA_TASK_ROOT}
+COPY --from=builder ${TARGET}/*.jar             /var/tmp/function.jar
+COPY --from=builder ${TARGET}/dependencies.zip  /var/tmp/dependencies.zip
+
+EXPOSE 8080
+CMD [ "org.springframework.cloud.function.adapter.aws.FunctionInvoker::handleRequest" ]

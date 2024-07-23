@@ -1,0 +1,40 @@
+name: "hiperium-devices"
+services:
+
+  devices-data-function:
+    image: "hiperium/city-devices-data-function:1.0.0"
+    container_name: "devices-data-function"
+    build:
+      context: functions
+      dockerfile: city-devices-data-function/tools/docker/Dockerfile-native
+    ports:
+      - "9000:8080"
+    env_file:
+      - commons/docker-compose/function.env
+    volumes:
+      - devices-data:/var/tmp
+    networks:
+      - "devices-network"
+
+  localstack:
+    image: localstack/localstack:latest
+    container_name: "devices-localstack"
+    ports:
+      - "4566:4566"
+    env_file:
+      - commons/docker-compose/localstack.env
+    volumes:
+      - devices-data:/var/tmp
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./functions/city-devices-data-function/src/test/resources/localstack/table-data.json:/var/lib/localstack/table-data.json
+      - ./functions/city-devices-data-function/src/test/resources/localstack/table-setup.sh:/etc/localstack/init/ready.d/table-setup.sh
+    depends_on:
+      - "devices-data-function"
+    networks:
+      - "devices-network"
+
+volumes:
+  devices-data:
+
+networks:
+  devices-network:

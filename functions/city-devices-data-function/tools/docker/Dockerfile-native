@@ -1,0 +1,29 @@
+#####################################################################################
+############################# Stage 1: Builder Image ################################
+#####################################################################################
+FROM hiperium/native-image-builder:latest AS builder
+WORKDIR /workspace
+
+COPY city-devices-data-function/pom.xml         city-devices-data-function/pom.xml
+RUN  mvn dependency:go-offline -B -f            city-devices-data-function/pom.xml
+COPY city-devices-data-function/src             city-devices-data-function/src
+COPY city-devices-data-function/tools/shell     city-devices-data-function/tools/shell
+COPY city-devices-data-function/tools/assembly  city-devices-data-function/tools/assembly
+
+RUN mvn -T 4C clean native:compile -Pnative -DskipTests -f city-devices-data-function/pom.xml -Ddependency-check.skip=true
+
+#####################################################################################
+############################ Stage 2: Application Image #############################
+#####################################################################################
+FROM public.ecr.aws/lambda/provided:al2023-arm64
+ARG APP_ROOT=/workspace/city-devices-data-function
+
+COPY --from=builder ${APP_ROOT}/target/native               ${LAMBDA_TASK_ROOT}
+COPY --from=builder ${APP_ROOT}/tools/shell/bootstrap       ${LAMBDA_RUNTIME_DIR}
+COPY --from=builder ${APP_ROOT}/target/native-assembly.zip  /var/tmp/native-assembly.zip
+
+### Required to invoke the function.
+RUN chmod +x ${LAMBDA_RUNTIME_DIR}/bootstrap
+
+EXPOSE 8080
+CMD [ "org.springframework.cloud.function.adapter.aws.FunctionInvoker::handleRequest" ]
