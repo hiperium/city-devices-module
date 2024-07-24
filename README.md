@@ -47,10 +47,10 @@ mvn clean process-classes                               \
 Then, in a new terminal window, invoke the Lambda Function from the project's root directory:
 ```bash
 curl -H "Content-Type: application/json" "http://localhost:8080/findByIdFunction" \
-  -d @functions/city-devices-data-function/src/test/resources/requests/lambda-valid-id-request.json
+  -d @functions/city-devices-data-function/src/test/resources/requests/valid/lambda-valid-id-request.json
   
 curl -H "Content-Type: application/json" "http://localhost:8080/updateStatusFunction" \
-  -d @functions/city-devices-update-function/src/test/resources/requests/lambda-valid-id-request.json
+  -d @functions/city-devices-update-function/src/test/resources/requests/valid/lambda-valid-id-request.json
 ```
 
 At this point, the Tracing Agent will generate the necessary configuration files for the native-image utility.

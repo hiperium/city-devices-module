@@ -1,9 +1,10 @@
 package hiperium.city.devices.update.function.functions;
 
-import hiperium.city.devices.update.function.dto.DeviceUpdateRequest;
-import hiperium.city.devices.update.function.dto.DeviceUpdateResponse;
+import hiperium.city.devices.update.function.dto.EventBridgeRequest;
+import hiperium.city.devices.update.function.dto.GenericResponse;
 import hiperium.city.devices.update.function.entities.CityStatus;
 import hiperium.city.devices.update.function.entities.Device;
+import hiperium.city.devices.update.function.exceptions.CityException;
 import hiperium.city.devices.update.function.exceptions.DisabledCityException;
 import hiperium.city.devices.update.function.exceptions.ResourceNotFoundException;
 import hiperium.city.devices.update.function.repository.DeviceRepository;
@@ -17,13 +18,10 @@ import reactor.core.publisher.Mono;
 import java.util.function.Function;
 
 /**
- * Function that updates a device status.
- *
- * @apiNote The Enhanced Client has problems at runtime when used with Spring Native.
- * This is because the Enhanced Client uses reflection to create the DynamoDbAsyncClient.
- * The solution is to use the low-level client instead.
+ * The UpdateStatusFunction class represents a function that applies the device update request
+ * and updates the device status.
  */
-public class UpdateStatusFunction implements Function<Message<DeviceUpdateRequest>, DeviceUpdateResponse> {
+public class UpdateStatusFunction implements Function<Message<EventBridgeRequest>, Mono<GenericResponse>> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UpdateStatusFunction.class);
 
@@ -34,32 +32,47 @@ public class UpdateStatusFunction implements Function<Message<DeviceUpdateReques
     }
 
     /**
-     * Applies the given device update request and updates the device status.
+     * Applies the device update request and updates the device status.
      *
-     * @param deviceUpdateRequestMono the device update request.
-     * @return the device update response with the HTTP status code.
+     * @param deviceUpdateRequestMono The device update request.
+     * @return A Mono that emits the generic response indicating the success or failure of the update operation.
      */
     @Override
-    public DeviceUpdateResponse apply(Message<DeviceUpdateRequest> deviceUpdateRequestMono) {
-        Mono.just(deviceUpdateRequestMono.getPayload())
+    public Mono<GenericResponse> apply(Message<EventBridgeRequest> deviceUpdateRequestMono) {
+        return Mono.just(deviceUpdateRequestMono.getPayload())
             .doOnNext(BeanValidationUtils::validateBean)
             .doOnNext(this::validateCityStatus)
             .doOnNext(this.deviceRepository::updateDeviceStatus)
-            .subscribe(
-                request -> LOGGER.debug("Update device status successfully: {}", request),
-                throwable -> LOGGER.error("ERROR: Couldn't update device status: {}", throwable.getMessage()));
-
-        return new DeviceUpdateResponse(HttpStatus.OK.value());
+            .then(Mono.just(new GenericResponse.Builder().statusCode(HttpStatus.NO_CONTENT.value()).build()))
+            .onErrorResume(UpdateStatusFunction::handleException);
     }
 
-    private void validateCityStatus(DeviceUpdateRequest deviceUpdateRequest) {
-        LOGGER.debug("Validating city status for request: {}", deviceUpdateRequest);
-        Device device = this.deviceRepository.findById(deviceUpdateRequest);
+    private void validateCityStatus(EventBridgeRequest eventBridgeRequest) {
+        LOGGER.debug("Validating city status for request: {}", eventBridgeRequest);
+        Device device = this.deviceRepository.findById(eventBridgeRequest);
         if (device == null) {
-            throw new ResourceNotFoundException("Device not found.");
+            throw new ResourceNotFoundException("Device not found: " + eventBridgeRequest.detail().deviceId());
         }
         if (device.cityStatus().equals(CityStatus.DISABLED)) {
-            throw new DisabledCityException("City is disabled.");
+            throw new DisabledCityException("City is disabled: " + eventBridgeRequest.detail().cityId());
         }
+    }
+
+    private static Mono<GenericResponse> handleException(Throwable throwable) {
+        LOGGER.error("ERROR: Couldn't update device status: {}", throwable.getMessage());
+
+        GenericResponse genericResponse;
+        if (throwable instanceof CityException cityException) {
+            genericResponse = new GenericResponse.Builder()
+                .statusCode(HttpStatus.NOT_ACCEPTABLE.value())
+                .body(cityException.getMessage())
+                .build();
+        } else {
+            genericResponse = new GenericResponse.Builder()
+                .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .body(throwable.getMessage())
+                .build();
+        }
+        return Mono.just(genericResponse);
     }
 }

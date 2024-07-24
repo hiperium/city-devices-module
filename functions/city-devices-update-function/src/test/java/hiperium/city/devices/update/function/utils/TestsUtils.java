@@ -1,15 +1,27 @@
 package hiperium.city.devices.update.function.utils;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import hiperium.city.devices.update.function.dto.EventBridgeRequest;
 import hiperium.city.devices.update.function.entities.Device;
+import org.springframework.lang.NonNull;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageHeaders;
 import org.testcontainers.shaded.org.awaitility.Awaitility;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.ResourceNotFoundException;
 import software.amazon.awssdk.services.dynamodb.model.TableStatus;
 
+import java.io.IOException;
 import java.time.Duration;
+import java.util.Map;
 
 public final class TestsUtils {
+
+    private static final ObjectMapper MAPPER = new ObjectMapper()
+        .findAndRegisterModules()
+        .enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 
     private TestsUtils() {
     }
@@ -29,5 +41,30 @@ public final class TestsUtils {
                     return false;
                 }
             });
+    }
+
+    public static <T> T unmarshal(byte[] jsonBytes, Class<T> type) {
+        try {
+            return MAPPER.readValue(jsonBytes, type);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Error unmarshalling the <" + type.getSimpleName() + "> object: " +
+                e.getMessage());
+        }
+    }
+
+    public static Message<EventBridgeRequest> createMessage(EventBridgeRequest eventBridgeRequest) {
+        return new Message<>() {
+            @NonNull
+            @Override
+            public EventBridgeRequest getPayload() {
+                return eventBridgeRequest;
+            }
+
+            @NonNull
+            @Override
+            public MessageHeaders getHeaders() {
+                return new MessageHeaders(Map.of());
+            }
+        };
     }
 }

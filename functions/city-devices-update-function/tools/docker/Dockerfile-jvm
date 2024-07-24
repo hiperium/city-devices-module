@@ -24,8 +24,8 @@ FROM public.ecr.aws/lambda/java:21-arm64
 ARG TARGET=/workspace/city-devices-update-function/target
 
 COPY --from=builder ${TARGET}/extracted         ${LAMBDA_TASK_ROOT}
-COPY --from=builder ${TARGET}/*.jar             /var/tmp/function.jar
-COPY --from=builder ${TARGET}/dependencies.zip  /var/tmp/dependencies.zip
+COPY --from=builder ${TARGET}/*.jar             /var/tmp/city-devices-update-function.jar
+COPY --from=builder ${TARGET}/dependencies.zip  /var/tmp/devices-update-dependencies.zip
 
 EXPOSE 8080
 CMD [ "org.springframework.cloud.function.adapter.aws.FunctionInvoker::handleRequest" ]

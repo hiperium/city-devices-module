@@ -1,6 +1,6 @@
 package hiperium.city.devices.update.function.utils;
 
-import hiperium.city.devices.update.function.dto.DeviceUpdateRequest;
+import hiperium.city.devices.update.function.dto.EventBridgeRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.ValidationException;
@@ -8,7 +8,6 @@ import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import reactor.core.publisher.Mono;
 
 import java.util.Set;
 
@@ -22,13 +21,13 @@ public final class BeanValidationUtils {
     private BeanValidationUtils() {
     }
 
-    public static void validateBean(DeviceUpdateRequest deviceUpdateRequest) {
-        LOGGER.debug("Validating request data: {}", deviceUpdateRequest);
+    public static void validateBean(EventBridgeRequest eventBridgeRequest) {
+        LOGGER.debug("Validating request data: {}", eventBridgeRequest);
         try (ValidatorFactory factory = Validation.buildDefaultValidatorFactory()) {
             Validator validator = factory.getValidator();
-            Set<ConstraintViolation<DeviceUpdateRequest>> violations = validator.validate(deviceUpdateRequest);
+            Set<ConstraintViolation<EventBridgeRequest>> violations = validator.validate(eventBridgeRequest);
             if (!violations.isEmpty()) {
-                ConstraintViolation<DeviceUpdateRequest> firstViolation = violations.iterator().next();
+                ConstraintViolation<EventBridgeRequest> firstViolation = violations.iterator().next();
                 throw new ValidationException(firstViolation.getMessage());
             }
         }

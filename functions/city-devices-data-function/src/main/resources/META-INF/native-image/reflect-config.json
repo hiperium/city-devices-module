@@ -175,7 +175,7 @@
   "name":"com.fasterxml.jackson.core.ObjectCodec",
   "allDeclaredFields":true,
   "queryAllDeclaredMethods":true,
-  "methods":[{"name":"getJsonFactory","parameterTypes":[] }, {"name":"readValues","parameterTypes":["com.fasterxml.jackson.core.JsonParser","com.fasterxml.jackson.core.type.ResolvedType"] }, {"name":"readValues","parameterTypes":["com.fasterxml.jackson.core.JsonParser","com.fasterxml.jackson.core.type.TypeReference"] }, {"name":"readValues","parameterTypes":["com.fasterxml.jackson.core.JsonParser","java.lang.Class"] }]
+  "methods":[{"name":"getJsonFactory","parameterTypes":[] }, {"name":"readValues","parameterTypes":["com.fasterxml.jackson.core.JsonParser","com.fasterxml.jackson.core.type.TypeReference"] }, {"name":"readValues","parameterTypes":["com.fasterxml.jackson.core.JsonParser","java.lang.Class"] }]
 },
 {
   "name":"com.fasterxml.jackson.core.TreeCodec",
@@ -421,7 +421,7 @@
   "allDeclaredFields":true,
   "queryAllDeclaredMethods":true,
   "queryAllDeclaredConstructors":true,
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"toDevice","parameterTypes":["java.util.Map"] }, {"name":"toDeviceResponse","parameterTypes":["hiperium.city.devices.data.function.entities.Device","int","java.lang.String"] }]
+  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"mapDevice","parameterTypes":["java.util.Map"] }, {"name":"mapDeviceResponse","parameterTypes":["hiperium.city.devices.data.function.entities.Device","int","java.lang.String"] }]
 },
 {
   "name":"io.awspring.cloud.autoconfigure.AwsClientProperties",
@@ -975,6 +975,10 @@
 {
   "name":"io.netty.util.ReferenceCountUtil",
   "queryAllDeclaredMethods":true
+},
+{
+  "name":"io.netty.util.ResourceLeakDetector$DefaultResourceLeak",
+  "fields":[{"name":"droppedRecords"}, {"name":"head"}]
 },
 {
   "name":"io.netty.util.concurrent.DefaultPromise",

@@ -1,5 +1,7 @@
 package hiperium.city.devices.data.function.utils;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import hiperium.city.devices.data.function.dto.DeviceIdRequest;
 import hiperium.city.devices.data.function.entities.Device;
 import org.springframework.lang.NonNull;
@@ -11,10 +13,15 @@ import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.ResourceNotFoundException;
 import software.amazon.awssdk.services.dynamodb.model.TableStatus;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.util.Map;
 
 public final class TestsUtils {
+
+    private static final ObjectMapper MAPPER = new ObjectMapper()
+        .findAndRegisterModules()
+        .enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 
     private TestsUtils() {
     }
@@ -34,6 +41,15 @@ public final class TestsUtils {
                     return false;
                 }
             });
+    }
+
+    public static <T> T unmarshal(byte[] jsonBytes, Class<T> type) {
+        try {
+            return MAPPER.readValue(jsonBytes, type);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Error unmarshalling the <" + type.getSimpleName() + "> object: " +
+                e.getMessage());
+        }
     }
 
     public static Message<DeviceIdRequest> createMessage(DeviceIdRequest cityIdRequest) {

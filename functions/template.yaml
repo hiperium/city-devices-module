@@ -33,6 +33,11 @@ Resources:
           KeyType: "RANGE"
       BillingMode: "PAY_PER_REQUEST"
 
+  DevicesUpdateFunctionDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: "city-devices-update-function-dlq"
+
   DevicesDataFunction:
     Type: AWS::Serverless::Function
     Properties:

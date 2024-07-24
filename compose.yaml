@@ -16,6 +16,23 @@ services:
     networks:
       - "devices-network"
 
+  devices-update-function:
+    image: "hiperium/city-devices-update-function:1.0.0"
+    container_name: "devices-update-function"
+    build:
+      context: functions
+      dockerfile: city-devices-update-function/tools/docker/Dockerfile-native
+    ports:
+      - "9000:8080"
+    env_file:
+      - commons/docker-compose/functions.env
+    depends_on:
+      - "devices-data-function"
+    volumes:
+      - devices-data:/var/tmp
+    networks:
+      - "devices-network"
+
   localstack:
     image: localstack/localstack:latest
     container_name: "devices-localstack"
@@ -26,10 +43,11 @@ services:
     volumes:
       - devices-data:/var/tmp
       - /var/run/docker.sock:/var/run/docker.sock
+      - ./commons/docker-compose/lambda-natives-setup.sh:/etc/localstack/init/ready.d/lambda-natives-setup.sh
       - ./functions/city-devices-data-function/src/test/resources/localstack/table-data.json:/var/lib/localstack/table-data.json
       - ./functions/city-devices-data-function/src/test/resources/localstack/table-setup.sh:/etc/localstack/init/ready.d/table-setup.sh
     depends_on:
-      - "devices-data-function"
+      - "devices-update-function"
     networks:
       - "devices-network"
 

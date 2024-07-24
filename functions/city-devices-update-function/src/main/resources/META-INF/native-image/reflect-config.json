@@ -169,13 +169,22 @@
   "name":"com.datastax.oss.driver.api.core.CqlSession"
 },
 {
+  "name":"com.fasterxml.jackson.annotation.JacksonAnnotation",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"com.fasterxml.jackson.annotation.JsonProperty",
+  "queryAllDeclaredMethods":true,
+  "methods":[{"name":"value","parameterTypes":[] }]
+},
+{
   "name":"com.fasterxml.jackson.core.JsonGenerator"
 },
 {
   "name":"com.fasterxml.jackson.core.ObjectCodec",
   "allDeclaredFields":true,
   "queryAllDeclaredMethods":true,
-  "methods":[{"name":"getJsonFactory","parameterTypes":[] }, {"name":"readValues","parameterTypes":["com.fasterxml.jackson.core.JsonParser","com.fasterxml.jackson.core.type.ResolvedType"] }, {"name":"readValues","parameterTypes":["com.fasterxml.jackson.core.JsonParser","com.fasterxml.jackson.core.type.TypeReference"] }, {"name":"readValues","parameterTypes":["com.fasterxml.jackson.core.JsonParser","java.lang.Class"] }]
+  "methods":[{"name":"getJsonFactory","parameterTypes":[] }, {"name":"readValues","parameterTypes":["com.fasterxml.jackson.core.JsonParser","com.fasterxml.jackson.core.type.ResolvedType"] }, {"name":"readValues","parameterTypes":["com.fasterxml.jackson.core.JsonParser","com.fasterxml.jackson.core.type.TypeReference"] }]
 },
 {
   "name":"com.fasterxml.jackson.core.TreeCodec",
@@ -392,17 +401,24 @@
   "methods":[{"name":"<init>","parameterTypes":["hiperium.city.devices.update.function.repository.DeviceRepository"] }, {"name":"updateStatusFunction","parameterTypes":[] }]
 },
 {
-  "name":"hiperium.city.devices.update.function.dto.DeviceUpdateRequest",
+  "name":"hiperium.city.devices.update.function.dto.EventBridgeRequest",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":["java.lang.String","java.lang.String","java.lang.String","java.lang.String","java.lang.String","java.lang.String","java.lang.String","java.util.List","hiperium.city.devices.update.function.dto.EventDetail"] }]
+},
+{
+  "name":"hiperium.city.devices.update.function.dto.EventDetail",
   "allDeclaredFields":true,
   "queryAllDeclaredMethods":true,
   "queryAllDeclaredConstructors":true,
   "methods":[{"name":"<init>","parameterTypes":["java.lang.String","java.lang.String","hiperium.city.devices.update.function.common.DeviceOperation"] }]
 },
 {
-  "name":"hiperium.city.devices.update.function.dto.DeviceUpdateResponse",
+  "name":"hiperium.city.devices.update.function.dto.GenericResponse",
   "allDeclaredFields":true,
   "queryAllDeclaredMethods":true,
-  "methods":[{"name":"httpStatus","parameterTypes":[] }]
+  "methods":[{"name":"body","parameterTypes":[] }, {"name":"headers","parameterTypes":[] }, {"name":"statusCode","parameterTypes":[] }]
 },
 {
   "name":"hiperium.city.devices.update.function.functions.UpdateStatusFunction",
@@ -1130,6 +1146,11 @@
 {
   "name":"jakarta.validation.ReportAsSingleViolation",
   "queryAllDeclaredMethods":true
+},
+{
+  "name":"jakarta.validation.Valid",
+  "queryAllDeclaredMethods":true,
+  "methods":[{"name":"value","parameterTypes":[] }]
 },
 {
   "name":"jakarta.validation.Validator",
@@ -5447,10 +5468,6 @@
 },
 {
   "name":"reactor.core.publisher.Hooks"
-},
-{
-  "name":"reactor.core.publisher.LambdaMonoSubscriber",
-  "fields":[{"name":"subscription"}]
 },
 {
   "name":"reactor.core.publisher.Mono"

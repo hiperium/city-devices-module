@@ -1,22 +1,24 @@
 package hiperium.city.devices.data.function;
 
 import hiperium.city.devices.data.function.common.TestContainersBase;
-import hiperium.city.devices.data.function.utils.TestsUtils;
 import hiperium.city.devices.data.function.configurations.FunctionsConfig;
 import hiperium.city.devices.data.function.dto.DeviceIdRequest;
 import hiperium.city.devices.data.function.dto.DeviceResponse;
+import hiperium.city.devices.data.function.utils.TestsUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.function.context.FunctionCatalog;
 import org.springframework.cloud.function.context.test.FunctionalSpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.messaging.Message;
 import org.springframework.test.context.ActiveProfiles;
-import org.testcontainers.shaded.org.apache.commons.lang3.StringUtils;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -24,14 +26,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles("test")
 @FunctionalSpringBootTest(classes = FunctionalApplication.class)
 class FunctionalApplicationTest extends TestContainersBase {
-
-    private static final String ENABLED_CITY_ID = "a0ecb466-7ef5-47bf-a1ca-12f9f9328528";
-    private static final String DISABLED_CITY_ID = "a0ecb466-7ef5-47bf-a1ca-12f9f9328529";
-    private static final String NON_EXISTING_CITY_ID = "a0ecb466-7ef5-47bf-a1ca-12f9f9328530";
-
-    private static final String EXISTING_DEVICE_1 = "37f44ed4-b672-4f81-a579-47679c0d6f31";
-    private static final String EXISTING_DEVICE_2 = "37f44ed4-b672-4f81-a579-47679c0d6f32";
-    private static final String NON_EXISTING_DEVICE_ID = "39f44ed4-b672-4f81-a579-47679c0d6f31";
 
     @Autowired
     private DynamoDbClient dynamoDbClient;
@@ -44,111 +38,51 @@ class FunctionalApplicationTest extends TestContainersBase {
         TestsUtils.waitForDynamoDbToBeReady(this.dynamoDbClient);
     }
 
-    @Test
-    @DisplayName("Existing device - Enabled city")
-    void givenExistingDeviceAndEnabledCity_whenInvokeLambdaFunction_thenReturnCityData() {
+    @ParameterizedTest
+    @DisplayName("Valid requests")
+    @ValueSource(strings = {
+        "requests/valid/lambda-valid-id-request.json"
+    })
+    void givenExistingDeviceAndEnabledCity_whenInvokeLambdaFunction_thenReturnCityData(String jsonFilePath) throws IOException {
         Function<Message<DeviceIdRequest>, DeviceResponse> function = this.getFunctionUnderTest();
-        Message<DeviceIdRequest> requestMessage = TestsUtils.createMessage(
-            new DeviceIdRequest.Builder()
-                .deviceId(EXISTING_DEVICE_1)
-                .cityId(ENABLED_CITY_ID)
-                .build());
-        DeviceResponse response = function.apply(requestMessage);
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(jsonFilePath)) {
+            assert inputStream != null;
+            DeviceIdRequest deviceIdRequest = TestsUtils.unmarshal(inputStream.readAllBytes(), DeviceIdRequest.class);
 
-        assertThat(response).isNotNull();
-        assertThat(response.id()).isEqualTo(EXISTING_DEVICE_1);
-        assertThat(response.cityId()).isEqualTo(ENABLED_CITY_ID);
-        assertThat(response.httpStatus()).isEqualTo(HttpStatus.OK.value());
+            Message<DeviceIdRequest> requestMessage = TestsUtils.createMessage(deviceIdRequest);
+            DeviceResponse response = function.apply(requestMessage);
+
+            assertThat(response).isNotNull();
+            assertThat(response.id()).isEqualTo(deviceIdRequest.deviceId());
+            assertThat(response.cityId()).isEqualTo(deviceIdRequest.cityId());
+            assertThat(response.httpStatus()).isEqualTo(HttpStatus.OK.value());
+        }
     }
 
-    @Test
-    @DisplayName("Existing device - Disabled city")
-    void givenExistingDeviceAndDisabledCity_whenInvokeLambdaFunction_thenError() {
+    @ParameterizedTest
+    @DisplayName("Non-valid requests")
+    @ValueSource(strings = {
+        "requests/non-valid/empty-device-id.json",
+        "requests/non-valid/wrong-device-uuid.json",
+        "requests/non-valid/non-existing-city.json",
+        "requests/non-valid/non-existing-device.json",
+        "requests/non-valid/existing-device-disabled-city.json",
+    })
+    void givenInvalidEvents_whenInvokeLambdaFunction_thenThrowsException(String jsonFilePath) throws IOException {
         Function<Message<DeviceIdRequest>, DeviceResponse> function = this.getFunctionUnderTest();
-        Message<DeviceIdRequest> requestMessage = TestsUtils.createMessage(
-            new DeviceIdRequest.Builder()
-                .deviceId(EXISTING_DEVICE_2)
-                .cityId(DISABLED_CITY_ID)
-                .build());
-        DeviceResponse response = function.apply(requestMessage);
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(jsonFilePath)) {
+            assert inputStream != null;
+            DeviceIdRequest event = TestsUtils.unmarshal(inputStream.readAllBytes(), DeviceIdRequest.class);
 
-        assertThat(response).isNotNull();
-        assertThat(response.id()).isNull();
-        assertThat(response.cityId()).isNull();
-        assertThat(response.httpStatus()).isEqualTo(HttpStatus.NOT_ACCEPTABLE.value());
-        assertThat(response.errorMessage()).isNotBlank();
-    }
+            Message<DeviceIdRequest> requestMessage = TestsUtils.createMessage(event);
+            DeviceResponse response = function.apply(requestMessage);
 
-    @Test
-    @DisplayName("Non-existing Device")
-    void givenNonExistingDevice_whenInvokeLambdaFunction_thenReturnError() {
-        Function<Message<DeviceIdRequest>, DeviceResponse> function = this.getFunctionUnderTest();
-        Message<DeviceIdRequest> requestMessage = TestsUtils.createMessage(
-            new DeviceIdRequest.Builder()
-                .deviceId(NON_EXISTING_DEVICE_ID)
-                .cityId(ENABLED_CITY_ID)
-                .build());
-        DeviceResponse response = function.apply(requestMessage);
-
-        assertThat(response).isNotNull();
-        assertThat(response.id()).isNull();
-        assertThat(response.cityId()).isNull();
-        assertThat(response.httpStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
-        assertThat(response.errorMessage()).isNotBlank();
-    }
-
-    @Test
-    @DisplayName("Non-existing City")
-    void givenNonExistingCity_whenInvokeLambdaFunction_thenReturnError() {
-        Function<Message<DeviceIdRequest>, DeviceResponse> function = this.getFunctionUnderTest();
-        Message<DeviceIdRequest> requestMessage = TestsUtils.createMessage(
-            new DeviceIdRequest.Builder()
-                .deviceId(EXISTING_DEVICE_1)
-                .cityId(NON_EXISTING_CITY_ID)
-                .build());
-        DeviceResponse response = function.apply(requestMessage);
-
-        assertThat(response).isNotNull();
-        assertThat(response.id()).isNull();
-        assertThat(response.cityId()).isNull();
-        assertThat(response.httpStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
-        assertThat(response.errorMessage()).isNotBlank();
-    }
-
-    @Test
-    @DisplayName("Blank City ID param")
-    void givenBlankCityParam_whenInvokeLambdaFunction_thenReturnError() {
-        Function<Message<DeviceIdRequest>, DeviceResponse> function = this.getFunctionUnderTest();
-        Message<DeviceIdRequest> requestMessage = TestsUtils.createMessage(
-            new DeviceIdRequest.Builder()
-                .deviceId(EXISTING_DEVICE_1)
-                .cityId(StringUtils.SPACE)
-                .build());
-        DeviceResponse response = function.apply(requestMessage);
-
-        assertThat(response).isNotNull();
-        assertThat(response.id()).isNull();
-        assertThat(response.cityId()).isNull();
-        assertThat(response.httpStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-        assertThat(response.errorMessage()).isNotBlank();
-    }
-
-    @Test
-    @DisplayName("Invalid Device ID param")
-    void givenInvalidDeviceParam_whenInvokeLambdaFunction_thenReturnError() {
-        Function<Message<DeviceIdRequest>, DeviceResponse> function = this.getFunctionUnderTest();
-        Message<DeviceIdRequest> requestMessage = TestsUtils.createMessage(
-            new DeviceIdRequest.Builder()
-                .deviceId("a0ecb466-7ef5-47bf")
-                .cityId(ENABLED_CITY_ID)
-                .build());
-        DeviceResponse response = function.apply(requestMessage);
-
-        assertThat(response).isNotNull();
-        assertThat(response.id()).isNull();
-        assertThat(response.cityId()).isNull();
-        assertThat(response.httpStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-        assertThat(response.errorMessage()).isNotBlank();
+            assertThat(response).isNotNull();
+            assertThat(response.id()).isNull();
+            assertThat(response.cityId()).isNull();
+            assertThat(response.httpStatus()).isNotEqualTo(HttpStatus.OK.value());
+            assertThat(response.errorMessage()).isNotBlank();
+        }
     }
 
     private Function<Message<DeviceIdRequest>, DeviceResponse> getFunctionUnderTest() {

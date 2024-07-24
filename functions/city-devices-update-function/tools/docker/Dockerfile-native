@@ -20,7 +20,7 @@ ARG APP_ROOT=/workspace/city-devices-update-function
 
 COPY --from=builder ${APP_ROOT}/target/native               ${LAMBDA_TASK_ROOT}
 COPY --from=builder ${APP_ROOT}/tools/shell/bootstrap       ${LAMBDA_RUNTIME_DIR}
-COPY --from=builder ${APP_ROOT}/target/native-assembly.zip  /var/tmp/native-assembly.zip
+COPY --from=builder ${APP_ROOT}/target/native-assembly.zip  /var/tmp/device-update-assembly.zip
 
 ### Required to invoke the function.
 RUN chmod +x ${LAMBDA_RUNTIME_DIR}/bootstrap
