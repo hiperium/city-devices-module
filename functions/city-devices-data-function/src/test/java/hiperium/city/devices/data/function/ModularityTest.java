@@ -1,6 +1,5 @@
 package hiperium.city.devices.data.function;
 
-import hiperium.city.devices.data.function.FunctionalApplication;
 import org.junit.jupiter.api.Test;
 import org.springframework.modulith.core.ApplicationModules;
 import org.springframework.test.context.ActiveProfiles;

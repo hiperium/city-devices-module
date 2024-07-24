@@ -1,28 +1,67 @@
 {
-  "Cities": [
+  "Devices": [
     {
       "PutRequest": {
         "Item": {
           "id": {
-            "S": "a0ecb466-7ef5-47bf-a1ca-12f9f9328528"
+            "S": "37f44ed4-b672-4f81-a579-47679c0d6f31"
           },
           "name": {
-            "S": "Hiperium City"
+            "S": "Device with Enabled City."
           },
-          "country": {
-            "S": "Ecuador"
+          "description": {
+            "S": "Device description."
           },
           "status": {
-            "S": "ACT"
+            "S": "OFF"
           },
-          "timezone": {
-            "S": "-05:00"
+          "cityId": {
+            "S": "a0ecb466-7ef5-47bf-a1ca-12f9f9328528"
+          },
+          "cityStatus": {
+            "S": "ENABLED"
+          },
+          "version": {
+            "N": "1"
           },
           "createdAt": {
-            "S": "2020-07-01T00:00:00Z-05:00"
+            "S": "2024-05-08T15:00:00Z-05:00"
           },
           "updatedAt": {
-            "S": "2020-07-01T00:00:00Z-05:00"
+            "S": "2024-05-08T15:00:00Z-05:00"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "id": {
+            "S": "37f44ed4-b672-4f81-a579-47679c0d6f32"
+          },
+          "name": {
+            "S": "Device with Disabled City."
+          },
+          "description": {
+            "S": "Device description."
+          },
+          "status": {
+            "S": "OFF"
+          },
+          "cityId": {
+            "S": "a0ecb466-7ef5-47bf-a1ca-12f9f9328529"
+          },
+          "cityStatus": {
+            "S": "DISABLED"
+          },
+          "version": {
+            "N": "1"
+          },
+          "createdAt": {
+            "S": "2024-05-08T15:00:00Z-05:00"
+          },
+          "updatedAt": {
+            "S": "2024-05-08T15:00:00Z-05:00"
           }
         }
       }

@@ -19,7 +19,7 @@ import java.util.function.Function;
 @Configuration(proxyBeanMethods=false)
 public class FunctionsConfig {
 
-    public static final String FIND_BY_ID_BEAN_NAME = "findById";
+    public static final String FIND_BY_ID_BEAN_NAME = "findByIdFunction";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FunctionsConfig.class);
 
@@ -37,7 +37,7 @@ public class FunctionsConfig {
      * @return The function that finds a device by its identifier.
      */
     @Bean(FIND_BY_ID_BEAN_NAME)
-    public Function<Message<DeviceIdRequest>, DeviceResponse> findById() {
+    public Function<Message<DeviceIdRequest>, DeviceResponse> findByIdFunction() {
         LOGGER.debug("Configuring Device Data Function...");
         return new DeviceDataFunction(this.deviceMapper, this.dynamoDbClient);
     }

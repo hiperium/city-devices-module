@@ -1,6 +1,6 @@
-package hiperium.city.devices.data.function.utils;
+package hiperium.city.devices.update.function.utils;
 
-import hiperium.city.devices.data.function.dto.DeviceIdRequest;
+import hiperium.city.devices.update.function.dto.DeviceUpdateRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.ValidationException;
@@ -8,6 +8,7 @@ import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import reactor.core.publisher.Mono;
 
 import java.util.Set;
 
@@ -21,19 +22,13 @@ public final class BeanValidationUtils {
     private BeanValidationUtils() {
     }
 
-    /**
-     * Validates a DeviceIdRequest object using bean validation.
-     *
-     * @param deviceIdRequest The DeviceIdRequest object to be validated.
-     * @throws ValidationException if the DeviceIdRequest object is invalid.
-     */
-    public static void validateBean(DeviceIdRequest deviceIdRequest) {
-        LOGGER.debug("Validating request data: {}", deviceIdRequest);
+    public static void validateBean(DeviceUpdateRequest deviceUpdateRequest) {
+        LOGGER.debug("Validating request data: {}", deviceUpdateRequest);
         try (ValidatorFactory factory = Validation.buildDefaultValidatorFactory()) {
             Validator validator = factory.getValidator();
-            Set<ConstraintViolation<DeviceIdRequest>> violations = validator.validate(deviceIdRequest);
+            Set<ConstraintViolation<DeviceUpdateRequest>> violations = validator.validate(deviceUpdateRequest);
             if (!violations.isEmpty()) {
-                ConstraintViolation<DeviceIdRequest> firstViolation = violations.iterator().next();
+                ConstraintViolation<DeviceUpdateRequest> firstViolation = violations.iterator().next();
                 throw new ValidationException(firstViolation.getMessage());
             }
         }

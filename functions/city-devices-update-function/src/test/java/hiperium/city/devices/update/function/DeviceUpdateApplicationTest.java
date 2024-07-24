@@ -6,6 +6,6 @@ import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles("test")
 @FunctionalSpringBootTest(classes = FunctionalApplication.class)
-class FunctionalApplicationTest extends TestContainersBase {
+class DeviceUpdateApplicationTest extends TestContainersBase {
 
 }

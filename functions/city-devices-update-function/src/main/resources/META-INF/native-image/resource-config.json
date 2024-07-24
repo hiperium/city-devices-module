@@ -81,13 +81,15 @@
   }, {
     "pattern":"\\Qgit.properties\\E"
   }, {
-    "pattern":"\\Qhiperium/city/data/function/\\E"
+    "pattern":"\\Qhiperium/city/devices/update/function/\\E"
   }, {
-    "pattern":"\\Qhiperium/city/data/function/configurations/FunctionsConfig.class\\E"
+    "pattern":"\\Qhiperium/city/devices/update/function/configurations/FunctionsConfig.class\\E"
   }, {
-    "pattern":"\\Qhiperium/city/data/function/mappers/CityMapper.class\\E"
+    "pattern":"\\Qhiperium/city/devices/update/function/mapper/DeviceMapper.class\\E"
   }, {
-    "pattern":"\\Qhiperium/city/data/function/mappers/CityMapperImpl.class\\E"
+    "pattern":"\\Qhiperium/city/devices/update/function/mapper/DeviceMapperImpl.class\\E"
+  }, {
+    "pattern":"\\Qhiperium/city/devices/update/function/repository/DeviceRepository.class\\E"
   }, {
     "pattern":"\\Qio/awspring/cloud/autoconfigure/core/AwsAutoConfiguration.class\\E"
   }, {

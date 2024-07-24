@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotNull;
 /**
  * Represents a request to update a device status using its identifier.
  */
-public record OperationRequest(
+public record DeviceUpdateRequest(
 
     @NotBlank
     @ValidUUID
@@ -22,14 +22,14 @@ public record OperationRequest(
     DeviceOperation deviceOperation) {
 
     /**
-     * This class represents a builder for creating {@code OperationRequest} objects.
+     * This class represents a builder for creating {@code DeviceUpdateRequest} objects.
      *
      * <p>
      * Example usage:
      * </p>
      *
      * <pre>{@code
-     * OperationRequest request = new OperationRequest.Builder()
+     * DeviceUpdateRequest request = new DeviceUpdateRequest.Builder()
      *     .deviceId("device123")
      *     .cityId("city456")
      *     .deviceOperation(DeviceOperation.ACTIVATE)
@@ -75,12 +75,12 @@ public record OperationRequest(
         }
 
         /**
-         * Builds a {@code OperationRequest} object with the provided values.
+         * Builds a {@code DeviceUpdateRequest} object with the provided values.
          *
-         * @return a new {@code OperationRequest} object
+         * @return a new {@code DeviceUpdateRequest} object
          */
-        public OperationRequest build() {
-            return new OperationRequest(deviceId, cityId, deviceOperation);
+        public DeviceUpdateRequest build() {
+            return new DeviceUpdateRequest(deviceId, cityId, deviceOperation);
         }
     }
 }

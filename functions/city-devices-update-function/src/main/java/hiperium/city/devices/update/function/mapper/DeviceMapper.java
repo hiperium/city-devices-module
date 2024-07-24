@@ -1,9 +1,7 @@
-package hiperium.city.devices.data.function.mappers;
+package hiperium.city.devices.update.function.mapper;
 
-import hiperium.city.devices.data.function.common.DeviceStatus;
-import hiperium.city.devices.data.function.dto.DeviceResponse;
-import hiperium.city.devices.data.function.entities.CityStatus;
-import hiperium.city.devices.data.function.entities.Device;
+import hiperium.city.devices.update.function.entities.CityStatus;
+import hiperium.city.devices.update.function.entities.Device;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
@@ -25,22 +23,9 @@ public interface DeviceMapper {
      * @return The converted Device object.
      */
     @Mapping(target = "id",          expression = "java(getStringValueFromAttributesMap(itemAttributesMap, Device.ID_COLUMN_NAME))")
-    @Mapping(target = "name",        expression = "java(getStringValueFromAttributesMap(itemAttributesMap, Device.NAME_COLUMN_NAME))")
-    @Mapping(target = "status",      expression = "java(getDeviceStatusEnumFromAttributesMap(itemAttributesMap))")
-    @Mapping(target = "description", expression = "java(getStringValueFromAttributesMap(itemAttributesMap, Device.DESCRIPTION_COLUMN_NAME))")
     @Mapping(target = "cityId",      expression = "java(getStringValueFromAttributesMap(itemAttributesMap, Device.CITY_ID_COLUMN_NAME))")
     @Mapping(target = "cityStatus",  expression = "java(getCityStatusEnumFromAttributesMap(itemAttributesMap))")
     Device mapDevice(Map<String, AttributeValue> itemAttributesMap);
-
-    /**
-     * Converts a {@link Device} object to a {@link DeviceResponse} object with the specified HTTP status and error message.
-     *
-     * @param device        The {@link Device} object to convert.
-     * @param httpStatus    The HTTP status code.
-     * @param errorMessage  The error message.
-     * @return The converted {@link DeviceResponse} object.
-     */
-    DeviceResponse mapDeviceResponse(Device device, int httpStatus, String errorMessage);
 
     /**
      * Retrieves the string value associated with the specified key from the given attributes map.
@@ -51,16 +36,6 @@ public interface DeviceMapper {
      */
     default String getStringValueFromAttributesMap(Map<String, AttributeValue> attributesMap, String key) {
         return attributesMap.containsKey(key) ? attributesMap.get(key).s() : null;
-    }
-
-    /**
-     * Retrieves the DeviceStatus enum value from the given attributes map.
-     *
-     * @param itemAttributesMap The map containing the device attributes.
-     * @return The DeviceStatus enum value retrieved from the attributes map.
-     */
-    default DeviceStatus getDeviceStatusEnumFromAttributesMap(Map<String, AttributeValue> itemAttributesMap) {
-        return DeviceStatus.valueOf(this.getStringValueFromAttributesMap(itemAttributesMap, Device.STATUS_COLUMN_NAME));
     }
 
     /**

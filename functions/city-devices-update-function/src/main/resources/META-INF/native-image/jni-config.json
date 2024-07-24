@@ -1,6 +1,6 @@
 [
 {
-  "name":"hiperium.city.data.function.FunctionalApplication",
+  "name":"hiperium.city.devices.update.function.FunctionalApplication",
   "methods":[{"name":"main","parameterTypes":["java.lang.String[]"] }]
 },
 {

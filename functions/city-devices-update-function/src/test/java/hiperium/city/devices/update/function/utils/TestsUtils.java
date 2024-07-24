@@ -1,9 +1,6 @@
 package hiperium.city.devices.update.function.utils;
 
-import hiperium.city.data.function.dto.CityIdRequest;
-import org.springframework.lang.NonNull;
-import org.springframework.messaging.Message;
-import org.springframework.messaging.MessageHeaders;
+import hiperium.city.devices.update.function.entities.Device;
 import org.testcontainers.shaded.org.awaitility.Awaitility;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
@@ -11,7 +8,6 @@ import software.amazon.awssdk.services.dynamodb.model.ResourceNotFoundException;
 import software.amazon.awssdk.services.dynamodb.model.TableStatus;
 
 import java.time.Duration;
-import java.util.Map;
 
 public final class TestsUtils {
 
@@ -24,7 +20,7 @@ public final class TestsUtils {
             .pollInterval(Duration.ofSeconds(3))    // check every 3 seconds
             .until(() -> {
                 DescribeTableRequest request = DescribeTableRequest.builder()
-                    .tableName(AppConstants.CITY_TABLE_NAME)
+                    .tableName(Device.TABLE_NAME)
                     .build();
                 try {
                     TableStatus tableStatus = dynamoDbClient.describeTable(request).table().tableStatus();
@@ -33,20 +29,5 @@ public final class TestsUtils {
                     return false;
                 }
             });
-    }
-
-    public static Message<CityIdRequest> createMessage(CityIdRequest cityIdRequest) {
-        return new Message<>() {
-            @NonNull
-            @Override
-            public CityIdRequest getPayload() {
-                return cityIdRequest;
-            }
-            @NonNull
-            @Override
-            public MessageHeaders getHeaders() {
-                return new MessageHeaders(Map.of());
-            }
-        };
     }
 }

@@ -53,18 +53,18 @@ public class DeviceDataFunction implements Function<Message<DeviceIdRequest>, De
         try {
             BeanValidationUtils.validateBean(deviceIdRequest);
         } catch (ValidationException exception) {
-            LOGGER.error("ERROR: Invalid Device ID request. Message: {}", exception.getMessage());
+            LOGGER.error("ERROR: Invalid device ID request: {}", exception.getMessage());
             return new DeviceResponse.Builder()
                 .httpStatus(HttpStatus.BAD_REQUEST.value())
                 .errorMessage(exception.getMessage())
                 .build();
         }
 
-        HashMap<String, AttributeValue> keyToGet = new HashMap<>();
-        keyToGet.put(Device.ID_COLUMN_NAME, AttributeValue.builder().s(deviceIdRequest.deviceId()).build());
-        keyToGet.put(Device.CITY_ID_COLUMN_NAME, AttributeValue.builder().s(deviceIdRequest.cityId()).build());
+        HashMap<String, AttributeValue> keyMap = new HashMap<>();
+        keyMap.put(Device.ID_COLUMN_NAME, AttributeValue.builder().s(deviceIdRequest.deviceId()).build());
+        keyMap.put(Device.CITY_ID_COLUMN_NAME, AttributeValue.builder().s(deviceIdRequest.cityId()).build());
         GetItemRequest request = GetItemRequest.builder()
-            .key(keyToGet)
+            .key(keyMap)
             .tableName(Device.TABLE_NAME)
             .build();
 
@@ -77,14 +77,14 @@ public class DeviceDataFunction implements Function<Message<DeviceIdRequest>, De
                     .errorMessage("Device not found.")
                     .build();
             } else {
-                Device device = this.deviceMapper.toDevice(returnedItem);
+                Device device = this.deviceMapper.mapDevice(returnedItem);
                 if (device.cityStatus().equals(CityStatus.DISABLED)) {
                     response = new DeviceResponse.Builder()
                         .httpStatus(HttpStatus.NOT_ACCEPTABLE.value())
                         .errorMessage("City is disabled.")
                         .build();
                 } else {
-                    response = this.deviceMapper.toDeviceResponse(device, HttpStatus.OK.value(), null);
+                    response = this.deviceMapper.mapDeviceResponse(device, HttpStatus.OK.value(), null);
                 }
             }
         } catch (DynamoDbException exception) {

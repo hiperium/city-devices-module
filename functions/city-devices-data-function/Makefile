@@ -1,4 +1,4 @@
-build-CityDataFunction:
+build-DevicesDataFunction:
 	echo "Building Devices Data Function..."
 	mvn -T 4C clean native:compile -Pnative -DskipTests -Ddependency-check.skip=true
 	cp target/native $(ARTIFACTS_DIR)

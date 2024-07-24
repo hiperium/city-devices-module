@@ -39,13 +39,13 @@
     </root>
 
     <springProfile name="local | dev | test">
-        <logger name="hiperium.city.data.function" level="DEBUG" additivity="false">
+        <logger name="hiperium.city.devices.update.function" level="DEBUG" additivity="false">
             <appender-ref ref="jsonAppender"/>
         </logger>
     </springProfile>
 
     <springProfile name="test">
-        <logger name="common.hiperium.city.devices.data.function.TestContainersBase" level="INFO" additivity="false">
+        <logger name="hiperium.city.devices.update.function.common.TestContainersBase" level="INFO" additivity="false">
             <appender-ref ref="textAppender"/>
         </logger>
     </springProfile>

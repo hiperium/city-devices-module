@@ -3,7 +3,7 @@ package hiperium.city.devices.data.function.entities;
 import hiperium.city.devices.data.function.common.DeviceStatus;
 
 /**
- * Represents a response object that contains information about a city.
+ * Represents a response object that contains information about a device.
  */
 public record Device(
 

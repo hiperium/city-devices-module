@@ -389,7 +389,7 @@
   "allDeclaredFields":true,
   "queryAllDeclaredMethods":true,
   "queryAllDeclaredConstructors":true,
-  "methods":[{"name":"<init>","parameterTypes":["hiperium.city.devices.data.function.mappers.DeviceMapper","software.amazon.awssdk.services.dynamodb.DynamoDbClient"] }, {"name":"findById","parameterTypes":[] }]
+  "methods":[{"name":"<init>","parameterTypes":["hiperium.city.devices.data.function.mappers.DeviceMapper","software.amazon.awssdk.services.dynamodb.DynamoDbClient"] }, {"name":"findByIdFunction","parameterTypes":[] }]
 },
 {
   "name":"hiperium.city.devices.data.function.dto.DeviceIdRequest",

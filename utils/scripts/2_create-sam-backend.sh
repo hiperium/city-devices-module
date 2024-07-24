@@ -9,9 +9,10 @@ cd "$WORKING_DIR"/functions || {
 echo ""
 echo "AWS INFORMATION:"
 echo ""
-echo "- Workloads Profile    : $AWS_WORKLOADS_PROFILE"
-echo "- Workloads Region     : $AWS_WORKLOADS_REGION"
 echo "- Workloads Environment: $AWS_WORKLOADS_ENV"
+echo "- Workloads Profile    : $AWS_WORKLOADS_PROFILE"
+echo "- Workloads Account    : $AWS_WORKLOADS_ACCOUNT_ID"
+echo "- Workloads Region     : $AWS_WORKLOADS_REGION"
 
 echo ""
 echo "VALIDATING SAM TEMPLATE..."
@@ -34,8 +35,11 @@ sam deploy                                                    \
 echo ""
 echo "DONE!"
 
-echo ""
-echo "LOADING DATA INTO DYNAMODB..."
-aws dynamodb batch-write-item \
-  --request-items file://"$WORKING_DIR"/functions/city-devices-data-function/src/test/resources/localstack/table-data.json \
-  --profile "$AWS_WORKLOADS_PROFILE" > /dev/null
+### LOADING TEST DATA INTO DYNAMODB ONLY IN DEV ENVIRONMENT
+if [ "$AWS_WORKLOADS_ENV" == "dev" ]; then
+    echo ""
+    echo "LOADING TEST DATA INTO DYNAMODB..."
+    aws dynamodb batch-write-item \
+      --request-items file://"$WORKING_DIR"/functions/city-devices-data-function/src/test/resources/localstack/table-data.json \
+      --profile "$AWS_WORKLOADS_PROFILE" > /dev/null
+fi
