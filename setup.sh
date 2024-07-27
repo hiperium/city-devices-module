@@ -100,7 +100,7 @@ menu() {
     *******************************************
     **************** Main Menu ****************
     *******************************************
-     1) Docker Compose.
+     1) Docker-Compose.
      2) Create Backend.
      3) Delete Backend.
     -------------------------------------------
@@ -115,7 +115,7 @@ menu() {
         helperMenu
         ;;
     1)
-        "$WORKING_DIR"/utils/scripts/1_deploy-docker-cluster.sh
+        "$WORKING_DIR"/utils/scripts/1_deploy-docker-compose.sh
         ;;
     2)
         printRemainingSessionTime

@@ -40,6 +40,6 @@ if [ "$AWS_WORKLOADS_ENV" == "dev" ]; then
     echo ""
     echo "LOADING TEST DATA INTO DYNAMODB..."
     aws dynamodb batch-write-item \
-      --request-items file://"$WORKING_DIR"/functions/city-devices-data-function/src/test/resources/localstack/table-data.json \
+      --request-items file://"$WORKING_DIR"/functions/device-data-function/src/test/resources/localstack/table-data.json \
       --profile "$AWS_WORKLOADS_PROFILE" > /dev/null
 fi

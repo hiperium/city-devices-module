@@ -4,7 +4,7 @@
 * **Level**: 300 - Senior.
 * **Technologies**: GraalVM, Spring Boot, Spring Cloud, Spring Webflux, Spring Native, Spring Modulith, Docker, Testcontainers, LocalStack, Amazon DynamoDB, AWS Lambda, and AWS SAM.
 
-![](utils/images/solution_architecture_diagram.png)
+![](utils/img/solution_architecture_diagram.png)
 
 ---
 ### Description.
@@ -35,33 +35,33 @@ These config files can be provided to the native-image utility when building a n
 First, execute the following command from the `project's root` directory to start the application with the Tracing Agent:
     
 ```bash
-mvn clean process-classes                               \
-    -f functions/city-devices-data-function/pom.xml     \
+mvn clean process-classes                           \
+    -f functions/device-data-function/pom.xml       \
     -P tracing-agent
     
-mvn clean process-classes                               \
-    -f functions/city-devices-update-function/pom.xml   \
+mvn clean process-classes                           \
+    -f functions/device-update-function/pom.xml     \
     -P tracing-agent
 ```
 
 Then, in a new terminal window, invoke the Lambda Function from the project's root directory:
 ```bash
 curl -H "Content-Type: application/json" "http://localhost:8080/findByIdFunction" \
-  -d @functions/city-devices-data-function/src/test/resources/requests/valid/lambda-valid-id-request.json
+  -d @functions/device-data-function/src/test/resources/requests/valid/lambda-valid-id-request.json
   
 curl -H "Content-Type: application/json" "http://localhost:8080/updateStatusFunction" \
-  -d @functions/city-devices-update-function/src/test/resources/requests/valid/lambda-valid-id-request.json
+  -d @functions/device-update-function/src/test/resources/requests/valid/lambda-valid-id-request.json
 ```
 
 At this point, the Tracing Agent will generate the necessary configuration files for the native-image utility.
 You can exit the application after the request is completed.
 Finally, copy the output files into the `META-INF/native-image` directory to be included by the native-image utility:
 ```bash
-cp -rf functions/city-devices-data-function/target/native-image/*                         \
-       functions/city-devices-data-function/src/main/resources/META-INF/native-image
+cp -rf functions/device-data-function/target/native-image/*                         \
+       functions/device-data-function/src/main/resources/META-INF/native-image
        
-cp -rf functions/city-devices-update-function/target/native-image/*                       \
-       functions/city-devices-update-function/src/main/resources/META-INF/native-image
+cp -rf functions/device-update-function/target/native-image/*                       \
+       functions/device-update-function/src/main/resources/META-INF/native-image
 ```
 
 After this, you can build the native image using as usual and make tests with the AWS Lambda Function.

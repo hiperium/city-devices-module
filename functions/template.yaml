@@ -33,17 +33,17 @@ Resources:
           KeyType: "RANGE"
       BillingMode: "PAY_PER_REQUEST"
 
-  DevicesUpdateFunctionDLQ:
+  DeviceUpdateFunctionDLQ:
     Type: AWS::SQS::Queue
     Properties:
-      QueueName: "city-devices-update-function-dlq"
+      QueueName: "device-update-function-dlq"
 
-  DevicesDataFunction:
+  DeviceDataFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ./city-devices-data-function
-      FunctionName: "city-devices-data-function"
-      Description: "Device Data function used only for internal services."
+      CodeUri: ./device-data-function
+      FunctionName: "device-data-function"
+      Description: "Device Data function used for internal services only."
       Handler: "org.springframework.cloud.function.adapter.aws.FunctionInvoker::handleRequest"
       Policies:
         - DynamoDBReadPolicy:
@@ -54,21 +54,64 @@ Resources:
     Metadata:
       BuildMethod: "makefile"
 
-  LogGroup:
+  DeviceUpdateFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./device-update-function
+      FunctionName: "device-update-function"
+      Description: "Device Update function used for internal services only."
+      Handler: "org.springframework.cloud.function.adapter.aws.FunctionInvoker::handleRequest"
+      DeadLetterQueue:
+        Type: SQS
+        TargetArn: !GetAtt DeviceUpdateFunctionDLQ.Arn
+      Events:
+        EventBridgeEvent:
+          Type: EventBridgeRule
+          Properties:
+            EventBusName: "cities-event-bus"
+            Pattern:
+              source:
+                - "hiperium.city.tasks.api"
+              detail-type:
+                - "ExecutedTaskEvent"
+      Policies:
+        - DynamoDBWritePolicy:
+            TableName: !Ref DevicesTable
+      Environment:
+        Variables:
+          SPRING_PROFILES_ACTIVE: !Ref SpringProfile
+    Metadata:
+      BuildMethod: "makefile"
+
+  DeviceDataLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Sub "/aws/lambda/${DevicesDataFunction}"
+      LogGroupName: !Sub "/aws/lambda/${DeviceDataFunction}"
+      RetentionInDays: 7
+
+  DeviceUpdateLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${DeviceUpdateFunction}"
       RetentionInDays: 7
 
 Outputs:
-  DeviceDataFunctionArn:
-    Description: "Device Data function ARN."
-    Value: !GetAtt DevicesDataFunction.Arn
-
   DevicesTableArn:
     Description: "Devices DynamoDB table ARN."
     Value: !GetAtt DevicesTable.Arn
 
+  DeviceDataFunctionArn:
+    Description: "Device Data function ARN."
+    Value: !GetAtt DeviceDataFunction.Arn
+
+  DeviceUpdateFunctionArn:
+    Description: "Device Updates function ARN."
+    Value: !GetAtt DeviceUpdateFunction.Arn
+
   DeviceDataFunctionIamRoleArn:
-    Description: "Implicit IAM Role ARN created for the Device Data function."
-    Value: !GetAtt DevicesDataFunctionRole.Arn
+    Description: "IAM Role ARN for the Device Data function."
+    Value: !GetAtt DeviceDataFunctionRole.Arn
+
+  DeviceUpdateFunctionIamRoleArn:
+    Description: "IAM Role ARN created for the Device Updates function."
+    Value: !GetAtt DeviceUpdateFunctionRole.Arn

@@ -3,8 +3,8 @@
 This project contains source code and supports files for a serverless application that you can deploy with the SAM CLI.
 It includes the following files and folders.
 
-- **city-devices-data-function** - Function that retrieves devices' data from a DynamoDB table.
-- **city-devices-update-function** - Function that updates devices' status in a DynamoDB table.
+- **device-data-function** - Function that retrieves devices' data from a DynamoDB table.
+- **device-update-function** - Function that updates devices' status in a DynamoDB table.
 
 The application uses AWS resources like Lambda and DynamoDB.
 These resources are defined in the `template.yaml` file in the parent project.
@@ -14,8 +14,8 @@ Tests are defined in the `src/test` directory inside each Lambda function projec
 
 Execute the following command to run the tests from the `project's root` directory:
 ```bash
-mvn test -f functions/city-devices-data-function/pom.xml
-mvn test -f functions/city-devices-update-function/pom.xml
+mvn test -f functions/device-data-function/pom.xml
+mvn test -f functions/device-update-function/pom.xml
 ```
 
 
@@ -29,16 +29,16 @@ so this profile configures the Docker Compose deployment for the LocalStack envi
 spring.docker.compose.enabled=true
 spring.docker.compose.start.log-level=debug
 spring.docker.compose.lifecycle-management=start_and_stop
-spring.docker.compose.file=functions/city-devices-data-function/tools/spring/compose.yaml
+spring.docker.compose.file=functions/device-data-function/tools/spring/compose.yaml
 ```
 
 Now, you can invoke the Lambda Function from the `project's root` directory using CURL:
 ```bash
 curl -H "Content-Type: application/json" "http://localhost:8080/findByIdFunction" \
-  -d @functions/city-devices-data-function/src/test/resources/requests/valid/lambda-valid-id-request.json
+  -d @functions/device-data-function/src/test/resources/requests/valid/lambda-valid-id-request.json
   
 curl -H "Content-Type: application/json" "http://localhost:8080/updateStatusFunction" \
-  -d @functions/city-devices-update-function/src/test/resources/requests/valid/lambda-valid-id-request.json
+  -d @functions/device-update-function/src/test/resources/requests/valid/lambda-valid-id-request.json
 ```
 
 Recall this is used only for local development and testing purposes.
@@ -55,17 +55,17 @@ docker compose up --build
 ### Invoke Lambda function using CURL.
 The following command will invoke the Lambda Function using CURL from the `project's root` directory:
 ```bash
-curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" \
-  -d @functions/city-devices-data-function/src/test/resources/requests/valid/lambda-valid-id-request.json
+curl -XPOST "http://localhost:9001/2015-03-31/functions/function/invocations" \
+  -d @functions/device-data-function/src/test/resources/requests/valid/lambda-valid-id-request.json
   
-curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" \
-  -d @functions/city-devices-update-function/src/test/resources/requests/valid/lambda-valid-id-request.json
+curl -XPOST "http://localhost:9002/2015-03-31/functions/function/invocations" \
+  -d @functions/device-update-function/src/test/resources/requests/valid/lambda-valid-id-request.json
 ```
 
 ### Getting records from DynamoDB.
 Execute the following command to get the created records in DynamoDB:
 ```bash
-awslocal dynamodb scan --table-name Cities
+awslocal dynamodb scan --table-name Devices
 ```
 
 
@@ -121,19 +121,19 @@ You can find more information and examples about filtering Lambda function logs 
 ### Invoke Lambda function.
 To invoke the Lambda Function deployed in AWS, use the following command from the `functions` directory:
 ```bash
-aws lambda invoke                                   \
-  --function-name "city-devices-data-function"      \
-  --payload file://functions/city-devices-data-function/src/test/resources/requests/valid/lambda-valid-id-request.json \
-  --cli-binary-format raw-in-base64-out             \
-  --profile "city-dev"                              \
+aws lambda invoke                               \
+  --function-name "device-data-function"        \
+  --payload file://functions/device-data-function/src/test/resources/requests/valid/lambda-valid-id-request.json \
+  --cli-binary-format raw-in-base64-out         \
+  --profile "city-dev"                          \
   ~/Downloads/response.json
   
-aws lambda invoke                                   \
-  --function-name "city-devices-update-function"    \
-  --invocation-type "Event"                         \
-  --payload file://functions/city-devices-update-function/src/test/resources/requests/valid/lambda-valid-id-request.json \
-  --cli-binary-format raw-in-base64-out             \
-  --profile "city-dev"                              \
+aws lambda invoke                               \
+  --function-name "device-update-function"      \
+  --invocation-type "Event"                     \
+  --payload file://functions/device-update-function/src/test/resources/requests/valid/lambda-valid-id-request.json \
+  --cli-binary-format raw-in-base64-out         \
+  --profile "city-dev"                          \
   ~/Downloads/response.json
 ```
 **IMPORTANT:** Note that the `--invocation-type Event` parameter is used to invoke the Lambda Function asynchronously.
