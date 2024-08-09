@@ -21,9 +21,6 @@
   "name":"[Ljava.lang.Class;"
 },
 {
-  "name":"[Ljava.lang.Object;"
-},
-{
   "name":"[Ljava.lang.String;"
 },
 {
@@ -98,24 +95,6 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "name":"ch.qos.logback.contrib.jackson.JacksonJsonFormatter",
-  "queryAllPublicMethods":true,
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"setPrettyPrint","parameterTypes":["boolean"] }]
-},
-{
-  "name":"ch.qos.logback.contrib.json.JsonFormatter",
-  "methods":[{"name":"valueOf","parameterTypes":["java.lang.String"] }]
-},
-{
-  "name":"ch.qos.logback.contrib.json.JsonLayoutBase",
-  "methods":[{"name":"setAppendLineSeparator","parameterTypes":["boolean"] }, {"name":"setJsonFormatter","parameterTypes":["ch.qos.logback.contrib.json.JsonFormatter"] }, {"name":"setTimestampFormat","parameterTypes":["java.lang.String"] }, {"name":"setTimestampFormatTimezoneId","parameterTypes":["java.lang.String"] }]
-},
-{
-  "name":"ch.qos.logback.contrib.json.classic.JsonLayout",
-  "queryAllPublicMethods":true,
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"setIncludeContextName","parameterTypes":["boolean"] }, {"name":"setIncludeMDC","parameterTypes":["boolean"] }, {"name":"setIncludeThreadName","parameterTypes":["boolean"] }]
-},
-{
   "name":"ch.qos.logback.core.ConsoleAppender",
   "queryAllPublicMethods":true,
   "methods":[{"name":"<init>","parameterTypes":[] }]
@@ -175,7 +154,7 @@
   "name":"com.fasterxml.jackson.core.ObjectCodec",
   "allDeclaredFields":true,
   "queryAllDeclaredMethods":true,
-  "methods":[{"name":"getJsonFactory","parameterTypes":[] }, {"name":"readValues","parameterTypes":["com.fasterxml.jackson.core.JsonParser","com.fasterxml.jackson.core.type.ResolvedType"] }, {"name":"readValues","parameterTypes":["com.fasterxml.jackson.core.JsonParser","com.fasterxml.jackson.core.type.TypeReference"] }, {"name":"readValues","parameterTypes":["com.fasterxml.jackson.core.JsonParser","java.lang.Class"] }]
+  "methods":[{"name":"getJsonFactory","parameterTypes":[] }, {"name":"readValues","parameterTypes":["com.fasterxml.jackson.core.JsonParser","com.fasterxml.jackson.core.type.ResolvedType"] }, {"name":"readValues","parameterTypes":["com.fasterxml.jackson.core.JsonParser","java.lang.Class"] }]
 },
 {
   "name":"com.fasterxml.jackson.core.TreeCodec",
@@ -359,6 +338,16 @@
   "name":"groovy.text.markup.MarkupTemplateEngine"
 },
 {
+  "name":"hiperium.cities.commons.annotations.ValidUUID",
+  "queryAllDeclaredMethods":true,
+  "methods":[{"name":"groups","parameterTypes":[] }, {"name":"message","parameterTypes":[] }, {"name":"payload","parameterTypes":[] }, {"name":"validationAppliesTo","parameterTypes":[] }]
+},
+{
+  "name":"hiperium.cities.commons.loggers.HiperiumLoggerLayout",
+  "queryAllPublicMethods":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"setAddLineSeparator","parameterTypes":["boolean"] }, {"name":"setIncludeContextName","parameterTypes":["boolean"] }, {"name":"setIncludeMDC","parameterTypes":["boolean"] }, {"name":"setIncludeThreadName","parameterTypes":["boolean"] }, {"name":"setPrettyPrint","parameterTypes":["boolean"] }]
+},
+{
   "name":"hiperium.city.devices.data.function.DeviceDataApplication",
   "allDeclaredFields":true,
   "allDeclaredClasses":true,
@@ -375,11 +364,6 @@
   "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"CGLIB$SET_STATIC_CALLBACKS","parameterTypes":["org.springframework.cglib.proxy.Callback[]"] }, {"name":"CGLIB$SET_THREAD_CALLBACKS","parameterTypes":["org.springframework.cglib.proxy.Callback[]"] }]
 },
 {
-  "name":"hiperium.city.devices.data.function.annotations.ValidUUID",
-  "queryAllDeclaredMethods":true,
-  "methods":[{"name":"groups","parameterTypes":[] }, {"name":"message","parameterTypes":[] }, {"name":"payload","parameterTypes":[] }, {"name":"validationAppliesTo","parameterTypes":[] }]
-},
-{
   "name":"hiperium.city.devices.data.function.common.DeviceStatus",
   "allDeclaredFields":true,
   "queryAllDeclaredMethods":true
@@ -392,14 +376,14 @@
   "methods":[{"name":"<init>","parameterTypes":["hiperium.city.devices.data.function.mappers.DeviceMapper","software.amazon.awssdk.services.dynamodb.DynamoDbClient"] }, {"name":"findByIdFunction","parameterTypes":[] }]
 },
 {
-  "name":"hiperium.city.devices.data.function.dto.DeviceIdRequest",
+  "name":"hiperium.city.devices.data.function.dto.DeviceDataRequest",
   "allDeclaredFields":true,
   "queryAllDeclaredMethods":true,
   "queryAllDeclaredConstructors":true,
-  "methods":[{"name":"<init>","parameterTypes":["java.lang.String","java.lang.String"] }]
+  "methods":[{"name":"<init>","parameterTypes":["java.lang.String","java.lang.String"] }, {"name":"cityId","parameterTypes":[] }, {"name":"deviceId","parameterTypes":[] }]
 },
 {
-  "name":"hiperium.city.devices.data.function.dto.DeviceResponse",
+  "name":"hiperium.city.devices.data.function.dto.DeviceDataResponse",
   "allDeclaredFields":true,
   "queryAllDeclaredMethods":true,
   "methods":[{"name":"cityId","parameterTypes":[] }, {"name":"errorMessage","parameterTypes":[] }, {"name":"httpStatus","parameterTypes":[] }, {"name":"id","parameterTypes":[] }, {"name":"name","parameterTypes":[] }, {"name":"status","parameterTypes":[] }]
@@ -1118,10 +1102,6 @@
 },
 {
   "name":"jakarta.validation.Constraint",
-  "queryAllDeclaredMethods":true
-},
-{
-  "name":"jakarta.validation.ReportAsSingleViolation",
   "queryAllDeclaredMethods":true
 },
 {

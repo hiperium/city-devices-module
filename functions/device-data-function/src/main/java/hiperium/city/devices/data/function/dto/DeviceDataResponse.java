@@ -5,7 +5,7 @@ import hiperium.city.devices.data.function.common.DeviceStatus;
 /**
  * Represents a response object that contains information about a device.
  */
-public record DeviceResponse(
+public record DeviceDataResponse(
 
     String id,
     String name,
@@ -15,7 +15,7 @@ public record DeviceResponse(
     String errorMessage) {
 
     /**
-     * Represents a builder class for creating instances of {@link DeviceResponse}.
+     * Represents a builder class for creating instances of {@link DeviceDataResponse}.
      */
     public static class Builder {
         private String id;
@@ -70,7 +70,7 @@ public record DeviceResponse(
         }
 
         /**
-         * Sets the HTTP status of the DeviceResponse.
+         * Sets the HTTP status of the DeviceDataResponse.
          *
          * @param httpStatus The HTTP status to set.
          * @return The Builder object.
@@ -81,10 +81,10 @@ public record DeviceResponse(
         }
 
         /**
-         * Sets the error message for the DeviceResponse builder.
+         * Sets the error message for the DeviceDataResponse builder.
          *
          * @param errorMessage The error message to be set.
-         * @return The updated DeviceResponse builder.
+         * @return The updated DeviceDataResponse builder.
          */
         public Builder errorMessage(String errorMessage) {
             this.errorMessage = errorMessage;
@@ -92,12 +92,12 @@ public record DeviceResponse(
         }
 
         /**
-         * Builds a {@link DeviceResponse} object with the provided values.
+         * Builds a {@link DeviceDataResponse} object with the provided values.
          *
-         * @return The built {@link DeviceResponse} object.
+         * @return The built {@link DeviceDataResponse} object.
          */
-        public DeviceResponse build() {
-            return new DeviceResponse(id, name, cityId, status, httpStatus, errorMessage);
+        public DeviceDataResponse build() {
+            return new DeviceDataResponse(id, name, cityId, status, httpStatus, errorMessage);
         }
     }
 }

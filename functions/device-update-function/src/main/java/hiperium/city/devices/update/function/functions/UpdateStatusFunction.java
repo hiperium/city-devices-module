@@ -1,29 +1,32 @@
 package hiperium.city.devices.update.function.functions;
 
-import hiperium.city.devices.update.function.dto.EventBridgeRequest;
-import hiperium.city.devices.update.function.dto.GenericResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import hiperium.cities.commons.loggers.HiperiumLogger;
+import hiperium.city.devices.update.function.dto.EventBridgeEvent;
+import hiperium.city.devices.update.function.dto.LambdaResponse;
 import hiperium.city.devices.update.function.entities.CityStatus;
 import hiperium.city.devices.update.function.entities.Device;
 import hiperium.city.devices.update.function.exceptions.CityException;
 import hiperium.city.devices.update.function.exceptions.DisabledCityException;
 import hiperium.city.devices.update.function.exceptions.ResourceNotFoundException;
 import hiperium.city.devices.update.function.repository.DeviceRepository;
-import hiperium.city.devices.update.function.utils.BeanValidationUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import hiperium.city.devices.update.function.validations.BeanValidations;
+import jakarta.validation.ValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.messaging.Message;
 import reactor.core.publisher.Mono;
 
+import java.io.IOException;
 import java.util.function.Function;
 
 /**
  * The UpdateStatusFunction class represents a function that applies the device update request
  * and updates the device status.
  */
-public class UpdateStatusFunction implements Function<Message<EventBridgeRequest>, Mono<GenericResponse>> {
+public class UpdateStatusFunction implements Function<Message<byte[]>, Mono<LambdaResponse>> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UpdateStatusFunction.class);
+    private static final HiperiumLogger LOGGER = new HiperiumLogger(UpdateStatusFunction.class);
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     private final DeviceRepository deviceRepository;
 
@@ -34,45 +37,55 @@ public class UpdateStatusFunction implements Function<Message<EventBridgeRequest
     /**
      * Applies the device update request and updates the device status.
      *
-     * @param deviceUpdateRequestMono The device update request.
+     * @param message The device update request.
      * @return A Mono that emits the generic response indicating the success or failure of the update operation.
      */
     @Override
-    public Mono<GenericResponse> apply(Message<EventBridgeRequest> deviceUpdateRequestMono) {
-        return Mono.just(deviceUpdateRequestMono.getPayload())
-            .doOnNext(BeanValidationUtils::validateBean)
-            .doOnNext(this::validateCityStatus)
-            .doOnNext(this.deviceRepository::updateDeviceStatus)
-            .then(Mono.just(new GenericResponse.Builder().statusCode(HttpStatus.NO_CONTENT.value()).build()))
-            .onErrorResume(UpdateStatusFunction::handleException);
+    public Mono<LambdaResponse> apply(Message<byte[]> message) {
+        try {
+            EventBridgeEvent event = OBJECT_MAPPER.readValue(message.getPayload(), EventBridgeEvent.class);
+            return Mono.just(event)
+                .doOnNext(BeanValidations::validateBean)
+                .doOnNext(this::validateCityStatus)
+                .doOnNext(this.deviceRepository::updateDeviceStatus)
+                .then(Mono.just(new LambdaResponse.Builder().statusCode(HttpStatus.NO_CONTENT.value()).build()))
+                .onErrorResume(UpdateStatusFunction::handleException);
+        } catch (IOException exception) {
+            return Mono.error(new RuntimeException("Error deserializing payload", exception));
+        }
     }
 
-    private void validateCityStatus(EventBridgeRequest eventBridgeRequest) {
-        LOGGER.debug("Validating city status for request: {}", eventBridgeRequest);
-        Device device = this.deviceRepository.findById(eventBridgeRequest);
+    private void validateCityStatus(EventBridgeEvent eventBridgeEvent) {
+        LOGGER.debug("Validating City Status", eventBridgeEvent.detail());
+        Device device = this.deviceRepository.findById(eventBridgeEvent);
         if (device == null) {
-            throw new ResourceNotFoundException("Device not found: " + eventBridgeRequest.detail().deviceId());
+            throw new ResourceNotFoundException("Device not found: " + eventBridgeEvent.detail().deviceId());
         }
         if (device.cityStatus().equals(CityStatus.DISABLED)) {
-            throw new DisabledCityException("City is disabled: " + eventBridgeRequest.detail().cityId());
+            throw new DisabledCityException("City is disabled: " + eventBridgeEvent.detail().cityId());
         }
     }
 
-    private static Mono<GenericResponse> handleException(Throwable throwable) {
-        LOGGER.error("ERROR: Couldn't update device status: {}", throwable.getMessage());
+    private static Mono<LambdaResponse> handleException(Throwable throwable) {
+        LOGGER.error("Couldn't update device status", throwable.getMessage());
 
-        GenericResponse genericResponse;
-        if (throwable instanceof CityException cityException) {
-            genericResponse = new GenericResponse.Builder()
+        LambdaResponse lambdaResponse;
+        if (throwable instanceof ValidationException validationException) {
+            lambdaResponse = new LambdaResponse.Builder()
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .body(validationException.getMessage())
+                .build();
+        } else if (throwable instanceof CityException cityException) {
+            lambdaResponse = new LambdaResponse.Builder()
                 .statusCode(HttpStatus.NOT_ACCEPTABLE.value())
                 .body(cityException.getMessage())
                 .build();
         } else {
-            genericResponse = new GenericResponse.Builder()
+            lambdaResponse = new LambdaResponse.Builder()
                 .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .body(throwable.getMessage())
                 .build();
         }
-        return Mono.just(genericResponse);
+        return Mono.just(lambdaResponse);
     }
 }

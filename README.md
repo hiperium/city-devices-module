@@ -49,8 +49,17 @@ Then, in a new terminal window, invoke the Lambda Function from the project's ro
 curl -H "Content-Type: application/json" "http://localhost:8080/findByIdFunction" \
   -d @functions/device-data-function/src/test/resources/requests/valid/lambda-valid-id-request.json
   
+curl -H "Content-Type: application/json" "http://localhost:8080/findByIdFunction" \
+  -d @functions/device-data-function/src/test/resources/requests/non-valid/empty-device-id.json
+```
+
+For the second Lambda Function, execute the following command:
+```bash
 curl -H "Content-Type: application/json" "http://localhost:8080/updateStatusFunction" \
   -d @functions/device-update-function/src/test/resources/requests/valid/lambda-valid-id-request.json
+  
+curl -H "Content-Type: application/json" "http://localhost:8080/updateStatusFunction" \
+  -d @functions/device-update-function/src/test/resources/requests/non-valid/empty-device-id.json
 ```
 
 At this point, the Tracing Agent will generate the necessary configuration files for the native-image utility.

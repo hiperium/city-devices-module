@@ -1,11 +1,10 @@
 package hiperium.city.devices.data.function.configurations;
 
-import hiperium.city.devices.data.function.dto.DeviceIdRequest;
-import hiperium.city.devices.data.function.dto.DeviceResponse;
+import hiperium.cities.commons.loggers.HiperiumLogger;
+import hiperium.city.devices.data.function.dto.DeviceDataRequest;
+import hiperium.city.devices.data.function.dto.DeviceDataResponse;
 import hiperium.city.devices.data.function.functions.DeviceDataFunction;
 import hiperium.city.devices.data.function.mappers.DeviceMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
@@ -21,7 +20,7 @@ public class FunctionsConfig {
 
     public static final String FIND_BY_ID_BEAN_NAME = "findByIdFunction";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(FunctionsConfig.class);
+    private static final HiperiumLogger LOGGER = new HiperiumLogger(FunctionsConfig.class);
 
     private final DeviceMapper deviceMapper;
     private final DynamoDbClient dynamoDbClient;
@@ -37,8 +36,8 @@ public class FunctionsConfig {
      * @return The function that finds a device by its identifier.
      */
     @Bean(FIND_BY_ID_BEAN_NAME)
-    public Function<Message<DeviceIdRequest>, DeviceResponse> findByIdFunction() {
-        LOGGER.debug("Configuring Device Data Function...");
+    public Function<Message<DeviceDataRequest>, DeviceDataResponse> findByIdFunction() {
+        LOGGER.debug("Creating Device Data Function Bean...");
         return new DeviceDataFunction(this.deviceMapper, this.dynamoDbClient);
     }
 }

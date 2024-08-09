@@ -2,7 +2,7 @@ package hiperium.city.devices.data.function.utils;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import hiperium.city.devices.data.function.dto.DeviceIdRequest;
+import hiperium.city.devices.data.function.dto.DeviceDataRequest;
 import hiperium.city.devices.data.function.entities.Device;
 import org.springframework.lang.NonNull;
 import org.springframework.messaging.Message;
@@ -52,11 +52,11 @@ public final class TestsUtils {
         }
     }
 
-    public static Message<DeviceIdRequest> createMessage(DeviceIdRequest cityIdRequest) {
+    public static Message<DeviceDataRequest> createMessage(DeviceDataRequest cityIdRequest) {
         return new Message<>() {
             @NonNull
             @Override
-            public DeviceIdRequest getPayload() {
+            public DeviceDataRequest getPayload() {
                 return cityIdRequest;
             }
 

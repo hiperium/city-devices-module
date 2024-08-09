@@ -1,16 +1,16 @@
 package hiperium.city.devices.data.function.dto;
 
-import hiperium.city.devices.data.function.annotations.ValidUUID;
+import hiperium.cities.commons.annotations.ValidUUID;
 import jakarta.validation.constraints.NotBlank;
 
 /**
  * Represents a request to retrieve information about a device using its unique identifier.
  */
-public record DeviceIdRequest(@NotBlank @ValidUUID String deviceId,
-                              @NotBlank @ValidUUID String cityId) {
+public record DeviceDataRequest(@NotBlank @ValidUUID String deviceId,
+                                @NotBlank @ValidUUID String cityId) {
 
     /**
-     * Represents a builder class for creating a {@code DeviceIdRequest} object with the specified device ID and city ID.
+     * Represents a builder class for creating a {@code DeviceDataRequest} object with the specified device ID and city ID.
      */
     public static class Builder {
         private String deviceId;
@@ -33,12 +33,12 @@ public record DeviceIdRequest(@NotBlank @ValidUUID String deviceId,
         }
 
         /**
-         * Builds a {@code DeviceIdRequest} object with the given device ID and city ID.
+         * Builds a {@code DeviceDataRequest} object with the given device ID and city ID.
          *
-         * @return a new {@code DeviceIdRequest} object with the specified device ID and city ID.
+         * @return a new {@code DeviceDataRequest} object with the specified device ID and city ID.
          */
-        public DeviceIdRequest build() {
-            return new DeviceIdRequest(deviceId, cityId);
+        public DeviceDataRequest build() {
+            return new DeviceDataRequest(deviceId, cityId);
         }
     }
 }

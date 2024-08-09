@@ -5,9 +5,9 @@ import java.util.Map;
 /**
  * Represents a response object for the device update operation.
  */
-public record GenericResponse(int statusCode,
-                              Map<String, String> headers,
-                              String body) {
+public record LambdaResponse(int statusCode,
+                             Map<String, String> headers,
+                             String body) {
 
     public static class Builder {
         private int statusCode;
@@ -48,12 +48,12 @@ public record GenericResponse(int statusCode,
         }
 
         /**
-         * Constructs a new instance of {@link GenericResponse} using the provided status code, headers, and body.
+         * Constructs a new instance of {@link LambdaResponse} using the provided status code, headers, and body.
          *
-         * @return a new instance of {@link GenericResponse}
+         * @return a new instance of {@link LambdaResponse}
          */
-        public GenericResponse build() {
-            return new GenericResponse(statusCode, headers, body);
+        public LambdaResponse build() {
+            return new LambdaResponse(statusCode, headers, body);
         }
     }
 }

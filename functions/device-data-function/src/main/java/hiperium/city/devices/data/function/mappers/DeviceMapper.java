@@ -1,8 +1,8 @@
 package hiperium.city.devices.data.function.mappers;
 
+import hiperium.city.devices.data.function.dto.DeviceDataResponse;
 import hiperium.city.devices.data.function.entities.CityStatus;
 import hiperium.city.devices.data.function.common.DeviceStatus;
-import hiperium.city.devices.data.function.dto.DeviceResponse;
 import hiperium.city.devices.data.function.entities.Device;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -33,14 +33,14 @@ public interface DeviceMapper {
     Device mapDevice(Map<String, AttributeValue> itemAttributesMap);
 
     /**
-     * Converts a {@link Device} object to a {@link DeviceResponse} object with the specified HTTP status and error message.
+     * Converts a {@link Device} object to a {@link DeviceDataResponse} object with the specified HTTP status and error message.
      *
      * @param device        The {@link Device} object to convert.
      * @param httpStatus    The HTTP status code.
      * @param errorMessage  The error message.
-     * @return The converted {@link DeviceResponse} object.
+     * @return The converted {@link DeviceDataResponse} object.
      */
-    DeviceResponse mapDeviceResponse(Device device, int httpStatus, String errorMessage);
+    DeviceDataResponse mapDeviceResponse(Device device, int httpStatus, String errorMessage);
 
     /**
      * Retrieves the string value associated with the specified key from the given attributes map.

@@ -100,26 +100,28 @@ awslocal lambda create-function                                                 
     --role 'arn:aws:iam::000000000000:role/lambda-role'                                               \
     --environment 'Variables={SPRING_CLOUD_AWS_ENDPOINT=http://host.docker.internal:4566}'
 
-echo ""
-echo "CREATING EVENTBRIDGE RULE FOR DEVICE UPDATE FUNCTION..."
+echo "CREATING EVENTBRIDGE RULE FOR UPDATE FUNCTION..."
 awslocal events put-rule                                        \
     --name 'device-update-function-rule'                        \
-    --event-pattern "{\"source\":[\"hiperium.city.tasks.api\"],\"detail-type\":[\"ExecutedTaskEvent\"]}"
+    --event-pattern '{
+      "source": ["hiperium.city.tasks.api"],
+      "detail-type": ["ExecutedTaskEvent"]
+    }'
 
 echo ""
-echo "ADDING DEVICE UPDATE FUNCTION AS EVENTBRIDGE TARGET..."
-awslocal events put-targets                                     \
-    --rule 'device-update-function-rule'                        \
-    --targets 'Id=1,Arn=arn:aws:lambda:us-east-1:000000000000:function:device-update-function'
-
-echo ""
-echo "ALLOWING EVENTBRIDGE TO INVOKE DEVICE UPDATE FUNCTION..."
+echo "ALLOWING EVENTBRIDGE TO INVOKE UPDATE FUNCTION..."
 awslocal lambda add-permission                                                  \
     --function-name 'device-update-function'                                    \
     --statement-id  'eventbridge-invoke-device-update-function-permission'      \
     --action        'lambda:InvokeFunction'                                     \
     --principal     'events.amazonaws.com'                                      \
     --source-arn    'arn:aws:events:us-east-1:000000000000:rule/device-update-function-rule'
+
+echo ""
+echo "SETTING UPDATE FUNCTION AS EVENTBRIDGE TARGET..."
+awslocal events put-targets                                     \
+    --rule 'device-update-function-rule'                        \
+    --targets 'Id=1,Arn=arn:aws:lambda:us-east-1:000000000000:function:device-update-function'
 
 echo ""
 echo "DONE!"

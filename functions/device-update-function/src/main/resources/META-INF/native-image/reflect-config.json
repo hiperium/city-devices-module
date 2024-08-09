@@ -98,24 +98,6 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "name":"ch.qos.logback.contrib.jackson.JacksonJsonFormatter",
-  "queryAllPublicMethods":true,
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"setPrettyPrint","parameterTypes":["boolean"] }]
-},
-{
-  "name":"ch.qos.logback.contrib.json.JsonFormatter",
-  "methods":[{"name":"valueOf","parameterTypes":["java.lang.String"] }]
-},
-{
-  "name":"ch.qos.logback.contrib.json.JsonLayoutBase",
-  "methods":[{"name":"setAppendLineSeparator","parameterTypes":["boolean"] }, {"name":"setJsonFormatter","parameterTypes":["ch.qos.logback.contrib.json.JsonFormatter"] }, {"name":"setTimestampFormat","parameterTypes":["java.lang.String"] }, {"name":"setTimestampFormatTimezoneId","parameterTypes":["java.lang.String"] }]
-},
-{
-  "name":"ch.qos.logback.contrib.json.classic.JsonLayout",
-  "queryAllPublicMethods":true,
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"setIncludeContextName","parameterTypes":["boolean"] }, {"name":"setIncludeMDC","parameterTypes":["boolean"] }, {"name":"setIncludeThreadName","parameterTypes":["boolean"] }]
-},
-{
   "name":"ch.qos.logback.core.ConsoleAppender",
   "queryAllPublicMethods":true,
   "methods":[{"name":"<init>","parameterTypes":[] }]
@@ -184,7 +166,7 @@
   "name":"com.fasterxml.jackson.core.ObjectCodec",
   "allDeclaredFields":true,
   "queryAllDeclaredMethods":true,
-  "methods":[{"name":"getJsonFactory","parameterTypes":[] }, {"name":"readValues","parameterTypes":["com.fasterxml.jackson.core.JsonParser","com.fasterxml.jackson.core.type.TypeReference"] }, {"name":"readValues","parameterTypes":["com.fasterxml.jackson.core.JsonParser","java.lang.Class"] }]
+  "methods":[{"name":"getJsonFactory","parameterTypes":[] }, {"name":"readValues","parameterTypes":["com.fasterxml.jackson.core.JsonParser","com.fasterxml.jackson.core.type.ResolvedType"] }, {"name":"readValues","parameterTypes":["com.fasterxml.jackson.core.JsonParser","com.fasterxml.jackson.core.type.TypeReference"] }]
 },
 {
   "name":"com.fasterxml.jackson.core.TreeCodec",
@@ -368,6 +350,16 @@
   "name":"groovy.text.markup.MarkupTemplateEngine"
 },
 {
+  "name":"hiperium.cities.commons.annotations.ValidUUID",
+  "queryAllDeclaredMethods":true,
+  "methods":[{"name":"groups","parameterTypes":[] }, {"name":"message","parameterTypes":[] }, {"name":"payload","parameterTypes":[] }, {"name":"validationAppliesTo","parameterTypes":[] }]
+},
+{
+  "name":"hiperium.cities.commons.loggers.HiperiumLoggerLayout",
+  "queryAllPublicMethods":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"setAddLineSeparator","parameterTypes":["boolean"] }, {"name":"setIncludeContextName","parameterTypes":["boolean"] }, {"name":"setIncludeMDC","parameterTypes":["boolean"] }, {"name":"setIncludeThreadName","parameterTypes":["boolean"] }, {"name":"setPrettyPrint","parameterTypes":["boolean"] }]
+},
+{
   "name":"hiperium.city.devices.update.function.DeviceUpdateApplication",
   "allDeclaredFields":true,
   "allDeclaredClasses":true,
@@ -384,14 +376,32 @@
   "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"CGLIB$SET_STATIC_CALLBACKS","parameterTypes":["org.springframework.cglib.proxy.Callback[]"] }, {"name":"CGLIB$SET_THREAD_CALLBACKS","parameterTypes":["org.springframework.cglib.proxy.Callback[]"] }]
 },
 {
-  "name":"hiperium.city.devices.update.function.annotations.ValidUUID",
-  "queryAllDeclaredMethods":true,
-  "methods":[{"name":"groups","parameterTypes":[] }, {"name":"message","parameterTypes":[] }, {"name":"payload","parameterTypes":[] }, {"name":"validationAppliesTo","parameterTypes":[] }]
-},
-{
   "name":"hiperium.city.devices.update.function.common.DeviceOperation",
   "allDeclaredFields":true,
   "queryAllDeclaredMethods":true
+},
+{
+  "name":"hiperium.city.devices.update.function.configurations.FiltersConfig",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"mdcFilter","parameterTypes":[] }, {"name":"setBeanFactory","parameterTypes":["org.springframework.beans.factory.BeanFactory"] }]
+},
+{
+  "name":"hiperium.city.devices.update.function.configurations.FiltersConfig$$SpringCGLIB$$0",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "fields":[{"name":"CGLIB$FACTORY_DATA"}],
+  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"CGLIB$SET_STATIC_CALLBACKS","parameterTypes":["org.springframework.cglib.proxy.Callback[]"] }, {"name":"CGLIB$SET_THREAD_CALLBACKS","parameterTypes":["org.springframework.cglib.proxy.Callback[]"] }]
+},
+{
+  "name":"hiperium.city.devices.update.function.configurations.FiltersConfig$$SpringCGLIB$$FastClass$$0",
+  "methods":[{"name":"<init>","parameterTypes":["java.lang.Class"] }]
+},
+{
+  "name":"hiperium.city.devices.update.function.configurations.FiltersConfig$$SpringCGLIB$$FastClass$$1",
+  "methods":[{"name":"<init>","parameterTypes":["java.lang.Class"] }]
 },
 {
   "name":"hiperium.city.devices.update.function.configurations.FunctionsConfig",
@@ -401,24 +411,30 @@
   "methods":[{"name":"<init>","parameterTypes":["hiperium.city.devices.update.function.repository.DeviceRepository"] }, {"name":"updateStatusFunction","parameterTypes":[] }]
 },
 {
-  "name":"hiperium.city.devices.update.function.dto.EventBridgeRequest",
+  "name":"hiperium.city.devices.update.function.dto.EventBridgeEvent",
   "allDeclaredFields":true,
   "queryAllDeclaredMethods":true,
   "queryAllDeclaredConstructors":true,
-  "methods":[{"name":"<init>","parameterTypes":["java.lang.String","java.lang.String","java.lang.String","java.lang.String","java.lang.String","java.lang.String","java.lang.String","java.util.List","hiperium.city.devices.update.function.dto.EventDetail"] }]
+  "methods":[{"name":"<init>","parameterTypes":["java.lang.String","java.lang.String","java.lang.String","java.lang.String","java.lang.String","java.lang.String","java.util.List","java.lang.String","hiperium.city.devices.update.function.dto.EventBridgeEventDetail"] }]
 },
 {
-  "name":"hiperium.city.devices.update.function.dto.EventDetail",
+  "name":"hiperium.city.devices.update.function.dto.EventBridgeEventDetail",
   "allDeclaredFields":true,
   "queryAllDeclaredMethods":true,
   "queryAllDeclaredConstructors":true,
-  "methods":[{"name":"<init>","parameterTypes":["java.lang.String","java.lang.String","hiperium.city.devices.update.function.common.DeviceOperation"] }]
+  "methods":[{"name":"<init>","parameterTypes":["java.lang.String","java.lang.String","hiperium.city.devices.update.function.common.DeviceOperation"] }, {"name":"cityId","parameterTypes":[] }, {"name":"deviceId","parameterTypes":[] }, {"name":"deviceOperation","parameterTypes":[] }]
 },
 {
-  "name":"hiperium.city.devices.update.function.dto.GenericResponse",
+  "name":"hiperium.city.devices.update.function.dto.LambdaResponse",
   "allDeclaredFields":true,
   "queryAllDeclaredMethods":true,
   "methods":[{"name":"body","parameterTypes":[] }, {"name":"headers","parameterTypes":[] }, {"name":"statusCode","parameterTypes":[] }]
+},
+{
+  "name":"hiperium.city.devices.update.function.filters.MdcFilter",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "methods":[{"name":"close","parameterTypes":[] }, {"name":"filter","parameterTypes":["org.springframework.web.server.ServerWebExchange","org.springframework.web.server.WebFilterChain"] }, {"name":"shutdown","parameterTypes":[] }]
 },
 {
   "name":"hiperium.city.devices.update.function.functions.UpdateStatusFunction",
@@ -968,6 +984,12 @@
   "name":"io.netty.channel.unix.PeerCredentials"
 },
 {
+  "name":"io.netty.handler.codec.HeadersUtils$1",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
+},
+{
   "name":"io.netty.handler.codec.haproxy.HAProxyMessageDecoder"
 },
 {
@@ -1141,10 +1163,6 @@
 },
 {
   "name":"jakarta.validation.Constraint",
-  "queryAllDeclaredMethods":true
-},
-{
-  "name":"jakarta.validation.ReportAsSingleViolation",
   "queryAllDeclaredMethods":true
 },
 {
@@ -1416,12 +1434,34 @@
   "name":"java.security.SecurityPermission"
 },
 {
+  "name":"java.util.AbstractCollection",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"java.util.AbstractList",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"java.util.Collection",
+  "queryAllDeclaredMethods":true
+},
+{
   "name":"java.util.Date"
 },
 {
   "name":"java.util.EventListener",
   "queryAllDeclaredMethods":true,
   "queryAllPublicMethods":true
+},
+{
+  "name":"java.util.List",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"java.util.Map",
+  "queryAllDeclaredMethods":true
 },
 {
   "name":"java.util.PropertyPermission"
@@ -4803,7 +4843,18 @@
   "name":"org.springframework.hateoas.EntityModel"
 },
 {
+  "name":"org.springframework.http.HttpHeaders",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true
+},
+{
   "name":"org.springframework.http.ReactiveHttpInputMessage"
+},
+{
+  "name":"org.springframework.http.ReadOnlyHttpHeaders",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true
 },
 {
   "name":"org.springframework.http.client.ReactorResourceFactory",
@@ -5087,6 +5138,10 @@
   "methods":[{"name":"createThread","parameterTypes":["java.lang.Runnable"] }, {"name":"getThreadGroup","parameterTypes":[] }, {"name":"getThreadNamePrefix","parameterTypes":[] }, {"name":"getThreadPriority","parameterTypes":[] }, {"name":"isDaemon","parameterTypes":[] }, {"name":"setDaemon","parameterTypes":["boolean"] }, {"name":"setThreadGroup","parameterTypes":["java.lang.ThreadGroup"] }, {"name":"setThreadGroupName","parameterTypes":["java.lang.String"] }, {"name":"setThreadPriority","parameterTypes":["int"] }]
 },
 {
+  "name":"org.springframework.util.MultiValueMap",
+  "queryAllDeclaredMethods":true
+},
+{
   "name":"org.springframework.validation.SmartValidator",
   "queryAllDeclaredMethods":true,
   "queryAllPublicMethods":true,
@@ -5363,6 +5418,11 @@
 },
 {
   "name":"org.springframework.web.server.WebExceptionHandler",
+  "queryAllDeclaredMethods":true,
+  "queryAllPublicMethods":true
+},
+{
+  "name":"org.springframework.web.server.WebFilter",
   "queryAllDeclaredMethods":true,
   "queryAllPublicMethods":true
 },

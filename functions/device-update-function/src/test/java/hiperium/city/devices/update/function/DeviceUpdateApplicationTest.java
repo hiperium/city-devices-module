@@ -2,8 +2,8 @@ package hiperium.city.devices.update.function;
 
 import hiperium.city.devices.update.function.common.TestContainersBase;
 import hiperium.city.devices.update.function.configurations.FunctionsConfig;
-import hiperium.city.devices.update.function.dto.EventBridgeRequest;
-import hiperium.city.devices.update.function.dto.GenericResponse;
+import hiperium.city.devices.update.function.dto.EventBridgeEvent;
+import hiperium.city.devices.update.function.dto.LambdaResponse;
 import hiperium.city.devices.update.function.utils.TestsUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -46,16 +46,15 @@ class DeviceUpdateApplicationTest extends TestContainersBase {
         "requests/valid/lambda-valid-id-request.json"
     })
     void givenValidEvent_whenInvokeLambdaFunction_thenExecuteSuccessfully(String jsonFilePath) throws IOException {
-        Function<Message<EventBridgeRequest>, Mono<GenericResponse>> createEventFunction = this.getFunctionUnderTest();
+        Function<Message<EventBridgeEvent>, Mono<LambdaResponse>> createEventFunction = this.getFunctionUnderTest();
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(jsonFilePath)) {
             assert inputStream != null;
-            EventBridgeRequest event = TestsUtils.unmarshal(inputStream.readAllBytes(), EventBridgeRequest.class);
-            Message<EventBridgeRequest> requestMessage = TestsUtils.createMessage(event);
+            EventBridgeEvent event = TestsUtils.unmarshal(inputStream.readAllBytes(), EventBridgeEvent.class);
+            Message<EventBridgeEvent> requestMessage = TestsUtils.createMessage(event);
 
             StepVerifier.create(createEventFunction.apply(requestMessage))
                 .assertNext(response -> {
                     assertThat(response).isNotNull();
-
                     // The status code should be a success code.
                     int statusCode = response.statusCode();
                     assertThat(statusCode >= HttpStatus.OK.value() && statusCode <= HttpStatus.IM_USED.value()).isTrue();
@@ -74,16 +73,15 @@ class DeviceUpdateApplicationTest extends TestContainersBase {
         "requests/non-valid/existing-device-disabled-city.json"
     })
     void givenInvalidEvents_whenInvokeLambdaFunction_thenThrowsException(String jsonFilePath) throws IOException {
-        Function<Message<EventBridgeRequest>, Mono<GenericResponse>> createEventFunction = this.getFunctionUnderTest();
+        Function<Message<EventBridgeEvent>, Mono<LambdaResponse>> createEventFunction = this.getFunctionUnderTest();
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(jsonFilePath)) {
             assert inputStream != null;
-            EventBridgeRequest event = TestsUtils.unmarshal(inputStream.readAllBytes(), EventBridgeRequest.class);
-            Message<EventBridgeRequest> requestMessage = TestsUtils.createMessage(event);
+            EventBridgeEvent event = TestsUtils.unmarshal(inputStream.readAllBytes(), EventBridgeEvent.class);
+            Message<EventBridgeEvent> requestMessage = TestsUtils.createMessage(event);
 
             StepVerifier.create(createEventFunction.apply(requestMessage))
                 .assertNext(response -> {
                     assertThat(response).isNotNull();
-
                     // The status code should be an error code.
                     int statusCode = response.statusCode();
                     assertThat(statusCode >= HttpStatus.OK.value() && statusCode <= HttpStatus.IM_USED.value()).isFalse();
@@ -92,8 +90,8 @@ class DeviceUpdateApplicationTest extends TestContainersBase {
         }
     }
 
-    private Function<Message<EventBridgeRequest>, Mono<GenericResponse>> getFunctionUnderTest() {
-        Function<Message<EventBridgeRequest>, Mono<GenericResponse>> function = this.functionCatalog.lookup(Function.class,
+    private Function<Message<EventBridgeEvent>, Mono<LambdaResponse>> getFunctionUnderTest() {
+        Function<Message<EventBridgeEvent>, Mono<LambdaResponse>> function = this.functionCatalog.lookup(Function.class,
             FunctionsConfig.UPDATE_STATUS_BEAN_NAME);
         assertThat(function).isNotNull();
         return function;

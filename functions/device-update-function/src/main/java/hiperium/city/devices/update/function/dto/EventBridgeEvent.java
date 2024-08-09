@@ -7,11 +7,11 @@ import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 /**
- * The EventBridgeRequest class represents a request received from EventBridge.
+ * The EventBridgeEvent class represents a request received from EventBridge.
  * It contains various attributes such as version, id, detailType, source, account, time, region, resources, and detail.
  *
  * <p>
- * The EventBridgeRequest class is a record, which provides a concise way to declare a class with final fields,
+ * The EventBridgeEvent class is a record, which provides a concise way to declare a class with final fields,
  * get methods, equals, hashCode, and toString methods automatically generated.
  * </p>
  *
@@ -20,32 +20,30 @@ import java.util.List;
  * </p>
  *
  * <pre>{@code
- * EventBridgeRequest eventRequest = new EventBridgeRequest("1.0", "123", "detail", "source", "account", "time",
+ * EventBridgeEvent eventRequest = new EventBridgeEvent("1.0", "123", "detail", "source", "account", "time",
  *     "region", List.of("resource1", "resource2"),
- *     new EventDetail("device-id", "city-id", DeviceOperation.ACTIVATE));
+ *     new EventBridgeEventDetail("device-id", "city-id", DeviceOperation.ACTIVATE));
  * }</pre>
  *
  * <p>
- * The EventBridgeRequest class is typically used as a parameter in various methods that process EventBridge requests.
+ * The EventBridgeEvent class is typically used as a parameter in various methods that process EventBridge requests.
  * </p>
  *
- * @see EventDetail
+ * @see EventBridgeEventDetail
  */
-public record EventBridgeRequest(
-    String version,
+public record EventBridgeEvent(
     String id,
-
-    @JsonProperty("detail-type")
-    String detailType,
-
+    String version,
     String source,
     String account,
     String time,
     String region,
     List<String> resources,
 
+    @JsonProperty("detail-type")
+    String detailType,
+
     @Valid
     @NotNull
-    EventDetail detail
-) {
+    EventBridgeEventDetail detail) {
 }

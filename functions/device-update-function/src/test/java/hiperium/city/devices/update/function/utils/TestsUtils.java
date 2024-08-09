@@ -2,7 +2,7 @@ package hiperium.city.devices.update.function.utils;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import hiperium.city.devices.update.function.dto.EventBridgeRequest;
+import hiperium.city.devices.update.function.dto.EventBridgeEvent;
 import hiperium.city.devices.update.function.entities.Device;
 import org.springframework.lang.NonNull;
 import org.springframework.messaging.Message;
@@ -52,12 +52,12 @@ public final class TestsUtils {
         }
     }
 
-    public static Message<EventBridgeRequest> createMessage(EventBridgeRequest eventBridgeRequest) {
+    public static Message<EventBridgeEvent> createMessage(EventBridgeEvent eventBridgeEvent) {
         return new Message<>() {
             @NonNull
             @Override
-            public EventBridgeRequest getPayload() {
-                return eventBridgeRequest;
+            public EventBridgeEvent getPayload() {
+                return eventBridgeEvent;
             }
 
             @NonNull

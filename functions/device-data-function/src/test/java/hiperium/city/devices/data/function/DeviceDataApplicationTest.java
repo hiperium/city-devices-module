@@ -2,8 +2,8 @@ package hiperium.city.devices.data.function;
 
 import hiperium.city.devices.data.function.common.TestContainersBase;
 import hiperium.city.devices.data.function.configurations.FunctionsConfig;
-import hiperium.city.devices.data.function.dto.DeviceIdRequest;
-import hiperium.city.devices.data.function.dto.DeviceResponse;
+import hiperium.city.devices.data.function.dto.DeviceDataRequest;
+import hiperium.city.devices.data.function.dto.DeviceDataResponse;
 import hiperium.city.devices.data.function.utils.TestsUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -44,17 +44,17 @@ class DeviceDataApplicationTest extends TestContainersBase {
         "requests/valid/lambda-valid-id-request.json"
     })
     void givenExistingDeviceAndEnabledCity_whenInvokeLambdaFunction_thenReturnCityData(String jsonFilePath) throws IOException {
-        Function<Message<DeviceIdRequest>, DeviceResponse> function = this.getFunctionUnderTest();
+        Function<Message<DeviceDataRequest>, DeviceDataResponse> function = this.getFunctionUnderTest();
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(jsonFilePath)) {
             assert inputStream != null;
-            DeviceIdRequest deviceIdRequest = TestsUtils.unmarshal(inputStream.readAllBytes(), DeviceIdRequest.class);
+            DeviceDataRequest deviceDataRequest = TestsUtils.unmarshal(inputStream.readAllBytes(), DeviceDataRequest.class);
 
-            Message<DeviceIdRequest> requestMessage = TestsUtils.createMessage(deviceIdRequest);
-            DeviceResponse response = function.apply(requestMessage);
+            Message<DeviceDataRequest> requestMessage = TestsUtils.createMessage(deviceDataRequest);
+            DeviceDataResponse response = function.apply(requestMessage);
 
             assertThat(response).isNotNull();
-            assertThat(response.id()).isEqualTo(deviceIdRequest.deviceId());
-            assertThat(response.cityId()).isEqualTo(deviceIdRequest.cityId());
+            assertThat(response.id()).isEqualTo(deviceDataRequest.deviceId());
+            assertThat(response.cityId()).isEqualTo(deviceDataRequest.cityId());
             assertThat(response.httpStatus()).isEqualTo(HttpStatus.OK.value());
         }
     }
@@ -69,13 +69,13 @@ class DeviceDataApplicationTest extends TestContainersBase {
         "requests/non-valid/existing-device-disabled-city.json",
     })
     void givenInvalidEvents_whenInvokeLambdaFunction_thenThrowsException(String jsonFilePath) throws IOException {
-        Function<Message<DeviceIdRequest>, DeviceResponse> function = this.getFunctionUnderTest();
+        Function<Message<DeviceDataRequest>, DeviceDataResponse> function = this.getFunctionUnderTest();
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(jsonFilePath)) {
             assert inputStream != null;
-            DeviceIdRequest event = TestsUtils.unmarshal(inputStream.readAllBytes(), DeviceIdRequest.class);
+            DeviceDataRequest event = TestsUtils.unmarshal(inputStream.readAllBytes(), DeviceDataRequest.class);
 
-            Message<DeviceIdRequest> requestMessage = TestsUtils.createMessage(event);
-            DeviceResponse response = function.apply(requestMessage);
+            Message<DeviceDataRequest> requestMessage = TestsUtils.createMessage(event);
+            DeviceDataResponse response = function.apply(requestMessage);
 
             assertThat(response).isNotNull();
             assertThat(response.id()).isNull();
@@ -85,8 +85,8 @@ class DeviceDataApplicationTest extends TestContainersBase {
         }
     }
 
-    private Function<Message<DeviceIdRequest>, DeviceResponse> getFunctionUnderTest() {
-        Function<Message<DeviceIdRequest>, DeviceResponse> function = this.functionCatalog.lookup(Function.class,
+    private Function<Message<DeviceDataRequest>, DeviceDataResponse> getFunctionUnderTest() {
+        Function<Message<DeviceDataRequest>, DeviceDataResponse> function = this.functionCatalog.lookup(Function.class,
             FunctionsConfig.FIND_BY_ID_BEAN_NAME);
         assertThat(function).isNotNull();
         return function;

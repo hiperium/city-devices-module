@@ -17,13 +17,10 @@ echo "- Workloads Region     : $AWS_WORKLOADS_REGION"
 echo ""
 echo "VALIDATING SAM TEMPLATE..."
 sam validate --lint
-echo "DONE!"
 
 echo ""
 echo "BUILDING SAM PROJECT LOCALLY..."
 unbuffer sam build
-echo ""
-echo "DONE!"
 
 echo ""
 echo "DEPLOYING SAM PROJECT INTO AWS..."
@@ -32,13 +29,11 @@ sam deploy                                                    \
     --no-confirm-changeset                                    \
     --disable-rollback                                        \
     --profile "$AWS_WORKLOADS_PROFILE"
-echo ""
-echo "DONE!"
 
 ### LOADING TEST DATA INTO DYNAMODB ONLY IN DEV ENVIRONMENT
 if [ "$AWS_WORKLOADS_ENV" == "dev" ]; then
     echo ""
-    echo "LOADING TEST DATA INTO DYNAMODB..."
+    echo "LOADING DATA INTO DYNAMODB..."
     aws dynamodb batch-write-item \
       --request-items file://"$WORKING_DIR"/functions/device-data-function/src/test/resources/localstack/table-data.json \
       --profile "$AWS_WORKLOADS_PROFILE" > /dev/null

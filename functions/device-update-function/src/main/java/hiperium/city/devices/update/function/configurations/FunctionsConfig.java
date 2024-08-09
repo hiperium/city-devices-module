@@ -1,11 +1,9 @@
 package hiperium.city.devices.update.function.configurations;
 
-import hiperium.city.devices.update.function.dto.EventBridgeRequest;
-import hiperium.city.devices.update.function.dto.GenericResponse;
+import hiperium.cities.commons.loggers.HiperiumLogger;
+import hiperium.city.devices.update.function.dto.LambdaResponse;
 import hiperium.city.devices.update.function.functions.UpdateStatusFunction;
 import hiperium.city.devices.update.function.repository.DeviceRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
@@ -20,7 +18,7 @@ import java.util.function.Function;
 public class FunctionsConfig {
 
     public static final String UPDATE_STATUS_BEAN_NAME = "updateStatusFunction";
-    private static final Logger LOGGER = LoggerFactory.getLogger(FunctionsConfig.class);
+    private static final HiperiumLogger LOGGER = new HiperiumLogger(FunctionsConfig.class);
 
     private final DeviceRepository deviceRepository;
 
@@ -34,8 +32,8 @@ public class FunctionsConfig {
      * @return The function that updates a device status.
      */
     @Bean(UPDATE_STATUS_BEAN_NAME)
-    public Function<Message<EventBridgeRequest>, Mono<GenericResponse>> updateStatusFunction() {
-        LOGGER.debug("Configuring the Update Status function...");
+    public Function<Message<byte[]>, Mono<LambdaResponse>> updateStatusFunction() {
+        LOGGER.debug("Creating the Update Status Function Bean...");
         return new UpdateStatusFunction(this.deviceRepository);
     }
 }
