@@ -3,7 +3,7 @@
   "id": "7bf73129-1428-4cd3-a780-95db273d1602",
   "account": "123456789012",
   "source": "hiperium.city.tasks.api",
-  "time": "2024-05-05T15:00:00Z",
+  "time": "2024-05-08T15:00:00Z-05:00",
   "region": "us-east-1",
   "resources": [],
   "detail-type": "ExecutedTaskEvent",
@@ -13,4 +13,3 @@
     "deviceOperation": "ACTIVATE"
   }
 }
-
