@@ -71,7 +71,7 @@ awslocal iam put-role-policy                \
 echo ""
 echo "CREATING DEVICE DATA FUNCTION..."
 awslocal lambda create-function                                                                 \
-    --function-name 'device-data-function'                                                      \
+    --function-name 'device-read-function'                                                      \
     --runtime 'provided.al2023'                                                                 \
     --architectures 'arm64'                                                                     \
     --zip-file fileb://"$DATA_FUNCTION_PATH"                                                    \

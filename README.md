@@ -24,7 +24,6 @@ The project is divided into the following files/directories:
 
 - **functions**: Directory used Lambda functions.
 - **utils**: Directory used for script files and other project documentation.
-- **common**: Directory used for common project files.
 
 
 ---
@@ -36,7 +35,7 @@ First, execute the following command from the `project's root` directory to star
     
 ```bash
 mvn clean process-classes                           \
-    -f functions/device-data-function/pom.xml       \
+    -f functions/device-read-function/pom.xml       \
     -P tracing-agent
     
 mvn clean process-classes                           \
@@ -46,19 +45,19 @@ mvn clean process-classes                           \
 
 Then, in a new terminal window, invoke the Lambda Function from the project's root directory:
 ```bash
-curl -H "Content-Type: application/json" "http://localhost:8080/findByIdFunction" \
-  -d @functions/device-data-function/src/test/resources/requests/valid/lambda-valid-id-request.json
+curl -H "Content-Type: application/json" "http://localhost:8080/findById" \
+  -d @functions/device-read-function/src/test/resources/requests/valid/lambda-valid-id-request.json
   
-curl -H "Content-Type: application/json" "http://localhost:8080/findByIdFunction" \
-  -d @functions/device-data-function/src/test/resources/requests/non-valid/empty-device-id.json
+curl -H "Content-Type: application/json" "http://localhost:8080/findById" \
+  -d @functions/device-read-function/src/test/resources/requests/non-valid/empty-device-id.json
 ```
 
 For the second Lambda Function, execute the following command:
 ```bash
-curl -H "Content-Type: application/json" "http://localhost:8080/updateStatusFunction" \
+curl -H "Content-Type: application/json" "http://localhost:8080/updateStatus" \
   -d @functions/device-update-function/src/test/resources/requests/valid/lambda-valid-id-request.json
   
-curl -H "Content-Type: application/json" "http://localhost:8080/updateStatusFunction" \
+curl -H "Content-Type: application/json" "http://localhost:8080/updateStatus" \
   -d @functions/device-update-function/src/test/resources/requests/non-valid/empty-device-id.json
 ```
 
@@ -66,8 +65,8 @@ At this point, the Tracing Agent will generate the necessary configuration files
 You can exit the application after the request is completed.
 Finally, copy the output files into the `META-INF/native-image` directory to be included by the native-image utility:
 ```bash
-cp -rf functions/device-data-function/target/native-image/*                         \
-       functions/device-data-function/src/main/resources/META-INF/native-image
+cp -rf functions/device-read-function/target/native-image/*                         \
+       functions/device-read-function/src/main/resources/META-INF/native-image
        
 cp -rf functions/device-update-function/target/native-image/*                       \
        functions/device-update-function/src/main/resources/META-INF/native-image

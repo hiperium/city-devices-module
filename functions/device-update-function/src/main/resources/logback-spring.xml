@@ -18,11 +18,8 @@
         <appender name="jsonAppender" class="ch.qos.logback.core.ConsoleAppender">
             <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
                 <layout class="hiperium.cities.commons.loggers.HiperiumLoggerLayout">
-                    <includeMDC>false</includeMDC>
                     <prettyPrint>true</prettyPrint>
-                    <addLineSeparator>true</addLineSeparator>
-                    <includeThreadName>false</includeThreadName>
-                    <includeContextName>false</includeContextName>
+                    <numericTimestamps>false</numericTimestamps>
                 </layout>
             </encoder>
         </appender>
@@ -32,12 +29,9 @@
         <appender name="jsonAppender" class="ch.qos.logback.core.ConsoleAppender">
             <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
                 <layout class="hiperium.cities.commons.loggers.HiperiumLoggerLayout">
-                    <includeMDC>true</includeMDC>
                     <prettyPrint>false</prettyPrint>
-                    <addLineSeparator>true</addLineSeparator>
                     <timeZoneId>America/Guayaquil</timeZoneId>
-                    <includeThreadName>true</includeThreadName>
-                    <includeContextName>true</includeContextName>
+                    <numericTimestamps>false</numericTimestamps>
                 </layout>
             </encoder>
         </appender>
@@ -47,7 +41,7 @@
         <root level="info">
             <appender-ref ref="textAppender"/>
         </root>
-        <logger name="hiperium.city.devices.update.function" level="DEBUG" additivity="false">
+        <logger name="hiperium.city.update.device.function" level="DEBUG" additivity="false">
             <appender-ref ref="jsonAppender"/>
         </logger>
         <logger name="io.awspring.cloud" level="DEBUG" additivity="false">
@@ -65,7 +59,7 @@
     </springProfile>
 
     <springProfile name="test">
-        <logger name="hiperium.city.devices.update.function.common.TestContainersBase" level="INFO" additivity="false">
+        <logger name="hiperium.city.update.device.function.common.TestContainersBase" level="INFO" additivity="false">
             <appender-ref ref="textAppender"/>
         </logger>
     </springProfile>
@@ -74,7 +68,7 @@
         <root level="info">
             <appender-ref ref="jsonAppender"/>
         </root>
-        <logger name="hiperium.city.devices.update.function" level="DEBUG" additivity="false">
+        <logger name="hiperium.city.update.device.function" level="DEBUG" additivity="false">
             <appender-ref ref="jsonAppender"/>
         </logger>
     </springProfile>

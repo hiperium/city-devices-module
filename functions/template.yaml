@@ -68,23 +68,23 @@ Resources:
     UpdateReplacePolicy: Retain
     DeletionPolicy: !Ref ResourceDeletionPolicy
 
-  DeviceDataFunctionLogGroup:
+  ReadFunctionLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Sub "/aws/lambda/${AWS::StackName}/DeviceDataFunction"
+      LogGroupName: !Sub "/aws/lambda/${AWS::StackName}/DeviceReadFunction"
       RetentionInDays: !Ref LogRetentionInDays
     UpdateReplacePolicy: Retain
     DeletionPolicy: !Ref ResourceDeletionPolicy
 
-  DeviceDataFunction:
+  ReadFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ./device-data-function
-      FunctionName: 'device-data-function'
-      Description: 'Device Data function used for internal services only.'
+      CodeUri: ./device-read-function
+      FunctionName: 'device-read-function'
+      Description: 'Read device data function.'
       Handler: org.springframework.cloud.function.adapter.aws.FunctionInvoker::handleRequest
       LoggingConfig:
-        LogGroup: !Ref DeviceDataFunctionLogGroup
+        LogGroup: !Ref ReadFunctionLogGroup
       Policies:
         - DynamoDBReadPolicy:
             TableName: !Ref DevicesTable
@@ -94,7 +94,7 @@ Resources:
     Metadata:
       BuildMethod: makefile
 
-  DeviceUpdateFunctionLogGroup:
+  UpdateFunctionLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: !Sub "/aws/lambda/${AWS::StackName}/DeviceUpdateFunction"
@@ -102,7 +102,7 @@ Resources:
     UpdateReplacePolicy: Retain
     DeletionPolicy: !Ref ResourceDeletionPolicy
 
-  DeviceUpdateFunctionDLQ:
+  UpdateFunctionDLQ:
     Type: AWS::SQS::Queue
     Properties:
       QueueName: 'device-update-function-dlq'
@@ -113,18 +113,18 @@ Resources:
     UpdateReplacePolicy: Retain
     DeletionPolicy: !Ref ResourceDeletionPolicy
 
-  DeviceUpdateFunction:
+  UpdateFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: ./device-update-function
       FunctionName: 'device-update-function'
-      Description: 'Device Update function used for internal services only.'
+      Description: 'Update device data function.'
       Handler: org.springframework.cloud.function.adapter.aws.FunctionInvoker::handleRequest
       LoggingConfig:
-        LogGroup: !Ref DeviceUpdateFunctionLogGroup
+        LogGroup: !Ref UpdateFunctionLogGroup
       DeadLetterQueue:
         Type: SQS
-        TargetArn: !GetAtt DeviceUpdateFunctionDLQ.Arn
+        TargetArn: !GetAtt UpdateFunctionDLQ.Arn
       Events:
         EventBridgeEvent:
           Type: EventBridgeRule
@@ -146,11 +146,11 @@ Resources:
     Metadata:
       BuildMethod: makefile
 
-  DeviceUpdateEventRule:
+  UpdateEventRule:
     Type: AWS::Events::Rule
     Properties:
       Name: 'device-update-event-rule'
-      Description: 'Update Device Event Rule'
+      Description: 'Update Event Rule'
       EventBusName: !Ref EventBusName
       State: ENABLED
       EventPattern:
@@ -159,7 +159,7 @@ Resources:
         detail-type:
           - 'ExecutedTaskEvent'
       Targets:
-        - Arn: !GetAtt DeviceUpdateFunction.Arn
+        - Arn: !GetAtt UpdateFunction.Arn
           Id: 'DeviceUpdateFunctionTarget'
           RetryPolicy:
             MaximumRetryAttempts: 3
@@ -167,13 +167,13 @@ Resources:
           DeadLetterConfig:
             Arn: !Sub "arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:${EventBusName}-dlq"
 
-  DeviceUpdateEventToLambdaPermission:
+  UpdateEventToLambdaPermission:
     Type: AWS::Lambda::Permission
     Properties:
-      FunctionName: !Ref DeviceUpdateFunction
+      FunctionName: !Ref UpdateFunction
       Action: lambda:InvokeFunction
       Principal: 'events.amazonaws.com'
-      SourceArn: !GetAtt DeviceUpdateEventRule.Arn
+      SourceArn: !GetAtt UpdateEventRule.Arn
 
   DeviceUpdateEventToSqsPermission:
     Type: AWS::SQS::QueuePolicy
@@ -190,21 +190,21 @@ Resources:
             Resource: !Sub "arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:${EventBusName}-dlq"
             Condition:
               ArnEquals:
-                aws:SourceArn: !GetAtt DeviceUpdateEventRule.Arn
+                aws:SourceArn: !GetAtt UpdateEventRule.Arn
 
 Outputs:
   DevicesTableArn:
-    Description: 'Devices DynamoDB table ARN.'
+    Description: 'Devices DynamoDB Table ARN.'
     Value: !GetAtt DevicesTable.Arn
 
   DeviceDataFunctionArn:
-    Description: 'Device Data function ARN.'
-    Value: !GetAtt DeviceDataFunction.Arn
+    Description: 'Device Read Function ARN.'
+    Value: !GetAtt ReadFunction.Arn
 
   DeviceUpdateFunctionArn:
-    Description: 'Device Updates function ARN.'
-    Value: !GetAtt DeviceUpdateFunction.Arn
+    Description: 'Device Update Function ARN.'
+    Value: !GetAtt UpdateFunction.Arn
 
   DeviceUpdateEventRuleArn:
-    Description: 'Update Device Event Rule ARN.'
-    Value: !GetAtt DeviceUpdateEventRule.Arn
+    Description: 'Device Update Event Rule ARN.'
+    Value: !GetAtt UpdateEventRule.Arn

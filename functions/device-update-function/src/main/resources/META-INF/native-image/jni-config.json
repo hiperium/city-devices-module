@@ -1,6 +1,6 @@
 [
 {
-  "name":"hiperium.city.devices.update.function.DeviceUpdateApplication",
+  "name":"hiperium.city.update.device.function.DeviceUpdateApplication",
   "methods":[{"name":"main","parameterTypes":["java.lang.String[]"] }]
 },
 {

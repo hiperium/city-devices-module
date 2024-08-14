@@ -1,4 +1,4 @@
-## Hiperium Device Update Function.
+## Hiperium Device's Update Function.
 
 This project contains source code using Spring Cloud Function to update devices' status in a DynamoDB table.
 It includes the following files and folders.

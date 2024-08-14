@@ -1,4 +1,4 @@
-build-DeviceUpdateFunction:
+build-UpdateFunction:
 	echo "Building Device Update Function..."
 	mvn -T 4C clean native:compile -Pnative -DskipTests -Ddependency-check.skip=true
 	cp target/native $(ARTIFACTS_DIR)
