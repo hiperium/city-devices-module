@@ -1,10 +1,10 @@
 package hiperium.city.devices.read.function.configurations;
 
 import hiperium.cities.commons.loggers.HiperiumLogger;
-import hiperium.city.devices.read.function.dto.DeviceDataResponse;
-import hiperium.city.devices.read.function.functions.DeviceDataFunction;
+import hiperium.city.devices.read.function.dto.DeviceReadResponse;
+import hiperium.city.devices.read.function.functions.ReadFunction;
 import hiperium.city.devices.read.function.mappers.DeviceMapper;
-import hiperium.city.devices.read.function.repository.DevicesRepository;
+import hiperium.city.devices.read.function.services.DevicesService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
@@ -23,14 +23,17 @@ public class FunctionsConfig {
     private static final HiperiumLogger LOGGER = new HiperiumLogger(FunctionsConfig.class);
 
     private final DeviceMapper deviceMapper;
-    private final DevicesRepository devicesRepository;
+    private final DevicesService devicesService;
 
     /**
      * This class represents the configuration for functions in the application.
+     *
+     * @param deviceMapper The DeviceMapper used for mapping device data between different representations.
+     * @param devicesService The DevicesService used for working with devices.
      */
-    public FunctionsConfig(DeviceMapper deviceMapper, DevicesRepository devicesRepository) {
+    public FunctionsConfig(DeviceMapper deviceMapper, DevicesService devicesService) {
         this.deviceMapper = deviceMapper;
-        this.devicesRepository = devicesRepository;
+        this.devicesService = devicesService;
     }
 
     /**
@@ -39,8 +42,8 @@ public class FunctionsConfig {
      * @return The function that finds a device by its identifier.
      */
     @Bean(FIND_BY_ID_BEAN_NAME)
-    public Function<Message<byte[]>, Mono<DeviceDataResponse>> findByIdFunction() {
+    public Function<Message<byte[]>, Mono<DeviceReadResponse>> findByIdFunction() {
         LOGGER.debug("Creating Device Data Function Bean...");
-        return new DeviceDataFunction(this.deviceMapper, this.devicesRepository);
+        return new ReadFunction(this.deviceMapper, this.devicesService);
     }
 }

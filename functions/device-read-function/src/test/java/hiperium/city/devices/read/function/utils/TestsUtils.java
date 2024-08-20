@@ -1,7 +1,6 @@
 package hiperium.city.devices.read.function.utils;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import hiperium.cities.commons.loggers.HiperiumLogger;
 import hiperium.city.devices.read.function.entities.Device;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -9,22 +8,23 @@ import org.springframework.lang.NonNull;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHeaders;
 import org.testcontainers.shaded.org.awaitility.Awaitility;
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient;
 import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
+import software.amazon.awssdk.services.dynamodb.model.DescribeTableResponse;
 import software.amazon.awssdk.services.dynamodb.model.ResourceNotFoundException;
 import software.amazon.awssdk.services.dynamodb.model.TableStatus;
 
 import java.time.Duration;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class TestsUtils {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper()
-        .findAndRegisterModules()
-        .enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+    private static final HiperiumLogger LOGGER = new HiperiumLogger(TestsUtils.class);
 
-    public static void waitForDynamoDbToBeReady(final DynamoDbClient dynamoDbClient) {
+    public static void waitForDynamoDbToBeReady(final DynamoDbAsyncClient dynamoDbAsyncClient) {
         Awaitility.await()
             .atMost(Duration.ofSeconds(30))         // maximum wait time
             .pollInterval(Duration.ofSeconds(3))    // check every 3 seconds
@@ -32,12 +32,16 @@ public final class TestsUtils {
                 DescribeTableRequest request = DescribeTableRequest.builder()
                     .tableName(Device.TABLE_NAME)
                     .build();
+                CompletableFuture<DescribeTableResponse> future = dynamoDbAsyncClient.describeTable(request);
                 try {
-                    TableStatus tableStatus = dynamoDbClient.describeTable(request).table().tableStatus();
+                    TableStatus tableStatus = future.get(500, TimeUnit.MILLISECONDS).table().tableStatus();
                     return TableStatus.ACTIVE.equals(tableStatus);
                 } catch (ResourceNotFoundException e) {
-                    return false;
+                    LOGGER.error("Cities table was not found", e.getMessage());
+                } catch (Exception e) {
+                    LOGGER.error("Error when trying to describe the Cities table", e.getMessage());
                 }
+                return false;
             });
     }
 

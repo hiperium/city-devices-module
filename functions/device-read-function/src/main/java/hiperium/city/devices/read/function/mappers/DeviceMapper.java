@@ -1,11 +1,13 @@
 package hiperium.city.devices.read.function.mappers;
 
-import hiperium.city.devices.read.function.dto.DeviceDataResponse;
-import hiperium.city.devices.read.function.entities.CityStatus;
+import hiperium.cities.commons.loggers.HiperiumLogger;
 import hiperium.city.devices.read.function.common.DeviceStatus;
+import hiperium.city.devices.read.function.dto.DeviceReadResponse;
 import hiperium.city.devices.read.function.entities.Device;
+import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
 import java.util.Map;
@@ -18,6 +20,8 @@ import java.util.Map;
 @Mapper(componentModel = "spring")
 public interface DeviceMapper {
 
+    HiperiumLogger LOGGER = new HiperiumLogger(DeviceMapper.class);
+
     /**
      * Converts a map of item attributes to a Device object.
      *
@@ -26,21 +30,19 @@ public interface DeviceMapper {
      */
     @Mapping(target = "id",           expression = "java(getStringValueFromAttributesMap(itemAttributesMap, Device.ID_COLUMN_NAME))")
     @Mapping(target = "name",         expression = "java(getStringValueFromAttributesMap(itemAttributesMap, Device.NAME_COLUMN_NAME))")
-    @Mapping(target = "deviceStatus", expression = "java(getDeviceStatusEnumFromAttributesMap(itemAttributesMap))")
-    @Mapping(target = "description",  expression = "java(getStringValueFromAttributesMap(itemAttributesMap, Device.DESCRIPTION_COLUMN_NAME))")
     @Mapping(target = "cityId",       expression = "java(getStringValueFromAttributesMap(itemAttributesMap, Device.CITY_ID_COLUMN_NAME))")
-    @Mapping(target = "cityStatus",   expression = "java(getCityStatusEnumFromAttributesMap(itemAttributesMap))")
+    @Mapping(target = "status",       expression = "java(getDeviceStatusEnumFromAttributesMap(itemAttributesMap))")
+    @Mapping(target = "description",  expression = "java(getStringValueFromAttributesMap(itemAttributesMap, Device.DESCRIPTION_COLUMN_NAME))")
     Device mapToDevice(Map<String, AttributeValue> itemAttributesMap);
 
     /**
-     * Converts a {@link Device} object to a {@link DeviceDataResponse} object with the specified HTTP deviceStatus and error message.
+     * Converts a {@link Device} object to a {@link DeviceReadResponse} object with the specified HTTP status and error message.
      *
-     * @param device        The {@link Device} object to convert.
-     * @param httpStatus    The HTTP deviceStatus code.
-     * @param errorMessage  The error message.
-     * @return The converted {@link DeviceDataResponse} object.
+     * @param device The {@link Device} object to convert.
+     * @return       The converted {@link DeviceReadResponse} object.
      */
-    DeviceDataResponse mapToDeviceResponse(Device device, int httpStatus, String errorMessage);
+    @Mapping(target = "error", ignore = true)
+    DeviceReadResponse mapToDeviceResponse(Device device);
 
     /**
      * Retrieves the string value associated with the specified key from the given attributes map.
@@ -64,15 +66,24 @@ public interface DeviceMapper {
     }
 
     /**
-     * Retrieves the CityStatus enum value from the given attributes map.
+     * Performs operations after mapping from source to a target object in the {@link DeviceMapper} class.
      *
-     * @param itemAttributesMap The map containing the item attributes.
-     *                          The key is the attribute name and the value is the AttributeValue.
-     * @return The CityStatus enum value obtained from the attributes map.
-     * @throws IllegalArgumentException If the CityStatus enum value cannot be obtained
-     *                                  from the attribute map.
+     * @param device               The mapped {@link Device} object.
+     * @param itemAttributesMap    The map of item attributes used for mapping.
      */
-    default CityStatus getCityStatusEnumFromAttributesMap(Map<String, AttributeValue> itemAttributesMap) {
-        return CityStatus.valueOf(this.getStringValueFromAttributesMap(itemAttributesMap, Device.CITY_STATUS_COLUMN_NAME));
+    @AfterMapping
+    default void afterMapToDevice(@MappingTarget Device device, Map<String, AttributeValue> itemAttributesMap) {
+        LOGGER.debug("Mapped device", device);
+    }
+
+    /**
+     * Performs the necessary operations after mapping a Device object to a DeviceReadResponse object.
+     *
+     * @param response The mapped DeviceReadResponse object.
+     * @param device   The original Device object.
+     */
+    @AfterMapping
+    default void afterMapToResponse(@MappingTarget DeviceReadResponse response, Device device) {
+        LOGGER.debug("Mapped response", response);
     }
 }

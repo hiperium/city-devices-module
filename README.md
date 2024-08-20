@@ -31,43 +31,36 @@ The project is divided into the following files/directories:
 The Tracing Agent monitors our application’s behavior to see what classes, methods, and resources are being accessed dynamically. 
 Then, it outputs configuration files that describe this dynamic behavior. 
 These config files can be provided to the native-image utility when building a native image.
-First, execute the following command from the `project's root` directory to start the application with the Tracing Agent:
+First, execute the following commands from the `project's root` directory to start the application with the Tracing Agent 
+for each Lambda function:
     
 ```bash
 mvn clean process-classes                           \
     -f functions/device-read-function/pom.xml       \
     -P tracing-agent
-    
+```
+```bash
 mvn clean process-classes                           \
     -f functions/device-update-function/pom.xml     \
     -P tracing-agent
 ```
 
-Then, in a new terminal window, invoke the Lambda Function from the project's root directory:
-```bash
-curl -H "Content-Type: application/json" "http://localhost:8080/findById" \
-  -d @functions/device-read-function/src/test/resources/requests/valid/lambda-valid-id-request.json
-  
-curl -H "Content-Type: application/json" "http://localhost:8080/findById" \
-  -d @functions/device-read-function/src/test/resources/requests/non-valid/empty-device-id.json
-```
+For the `reader` Lambda function, navigate to the `functions/city-read-function/src/test/http/local.http` file, 
+and execute all requests to invoke the deployed function.
 
-For the second Lambda Function, execute the following command:
-```bash
-curl -H "Content-Type: application/json" "http://localhost:8080/updateStatus" \
-  -d @functions/device-update-function/src/test/resources/requests/valid/lambda-valid-id-request.json
-  
-curl -H "Content-Type: application/json" "http://localhost:8080/updateStatus" \
-  -d @functions/device-update-function/src/test/resources/requests/non-valid/empty-device-id.json
-```
+For the `update` Lambda function, navigate to the `functions/city-update-function/src/test/http/local.http` file,
+and execute all requests to invoke the deployed function.
 
 At this point, the Tracing Agent will generate the necessary configuration files for the native-image utility.
 You can exit the application after the request is completed.
-Finally, copy the output files into the `META-INF/native-image` directory to be included by the native-image utility:
+Finally, copy the output files into the `META-INF/native-image` directory to be included by the native-image utility
+for each Lambda function:
+
 ```bash
 cp -rf functions/device-read-function/target/native-image/*                         \
        functions/device-read-function/src/main/resources/META-INF/native-image
-       
+```
+```bash
 cp -rf functions/device-update-function/target/native-image/*                       \
        functions/device-update-function/src/main/resources/META-INF/native-image
 ```
@@ -84,6 +77,7 @@ You can execute the following script to show you the deployment options:
 ```
 
 Select the default option to deploy the Lambda Function to AWS.
+
 
 ---
 ### Maven Parent overrides

@@ -6,7 +6,7 @@ export WORKING_DIR
 
 function setEnvironmentVariables() {
     echo ""
-    read -r -p 'Enter the <Environment> to deploy the Hiperium service: [dev] ' env_name
+    read -r -p 'Enter the <Environment> to deploy the Hiperium services: [dev] ' env_name
     echo ""
     echo "Wait a moment please..."
 

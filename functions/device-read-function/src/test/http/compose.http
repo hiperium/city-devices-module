@@ -1,0 +1,40 @@
+### Valid Request
+POST http://localhost:9001/2015-03-31/functions/function/invocations
+Content-Type: application/json
+
+< ../resources/requests/valid/lambda-valid-id-request.json
+
+
+### Empty Device ID
+POST http://localhost:9001/2015-03-31/functions/function/invocations
+Content-Type: application/json
+
+< ../resources/requests/invalid/empty-device-id.json
+
+
+### Non-existing Device ID
+POST http://localhost:9001/2015-03-31/functions/function/invocations
+Content-Type: application/json
+
+< ../resources/requests/invalid/non-existing-device.json
+
+
+### Non-existing City ID
+POST http://localhost:9001/2015-03-31/functions/function/invocations
+Content-Type: application/json
+
+< ../resources/requests/invalid/non-existing-city.json
+
+
+### Wrong Device ID
+POST http://localhost:9001/2015-03-31/functions/function/invocations
+Content-Type: application/json
+
+< ../resources/requests/invalid/wrong-device-id.json
+
+
+### Wrong Payload
+POST http://localhost:9001/2015-03-31/functions/function/invocations
+Content-Type: application/json
+
+< ../resources/requests/invalid/wrong-payload.json

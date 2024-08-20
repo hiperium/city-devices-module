@@ -150,7 +150,7 @@ Resources:
     Type: AWS::Events::Rule
     Properties:
       Name: 'device-update-event-rule'
-      Description: 'Update Event Rule'
+      Description: 'Update Device Event Rule'
       EventBusName: !Ref EventBusName
       State: ENABLED
       EventPattern:
@@ -175,7 +175,7 @@ Resources:
       Principal: 'events.amazonaws.com'
       SourceArn: !GetAtt UpdateEventRule.Arn
 
-  DeviceUpdateEventToSqsPermission:
+  UpdateEventToSqsPermission:
     Type: AWS::SQS::QueuePolicy
     Properties:
       Queues:
@@ -197,14 +197,14 @@ Outputs:
     Description: 'Devices DynamoDB Table ARN.'
     Value: !GetAtt DevicesTable.Arn
 
-  DeviceDataFunctionArn:
-    Description: 'Device Read Function ARN.'
+  ReadFunctionArn:
+    Description: 'Read Device Function ARN.'
     Value: !GetAtt ReadFunction.Arn
 
-  DeviceUpdateFunctionArn:
-    Description: 'Device Update Function ARN.'
+  UpdateFunctionArn:
+    Description: 'Update Device Function ARN.'
     Value: !GetAtt UpdateFunction.Arn
 
-  DeviceUpdateEventRuleArn:
-    Description: 'Device Update Event Rule ARN.'
+  UpdateEventRuleArn:
+    Description: 'Update Device Event Rule ARN.'
     Value: !GetAtt UpdateEventRule.Arn

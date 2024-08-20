@@ -9,6 +9,8 @@ It includes the following files and folders.
 The application uses AWS resources like Lambda and DynamoDB.
 These resources are defined in the `template.yaml` file in the parent project.
 
+
+---
 ## Running Integration Tests using Testcontainers.
 Tests are defined in the `src/test` directory inside each Lambda function project.
 
@@ -20,10 +22,10 @@ mvn test -f functions/device-update-function/pom.xml
 
 
 ---
-## Deploying Lambda function Locally using IntelliJ.
+## Deploying Lambda function using IntelliJ.
 Start the main class from the IDE to run the Lambda Function.
-The project uses the "local" profile as default,
-so this profile configures the Docker Compose deployment for the LocalStack environment:
+The project uses the `local` profile as default, so this profile configures the Docker Compose deployment 
+for the LocalStack environment:
 
 ```properties
 spring.docker.compose.enabled=true
@@ -32,36 +34,24 @@ spring.docker.compose.lifecycle-management=start_and_stop
 spring.docker.compose.file=functions/device-read-function/tools/spring/compose.yaml
 ```
 
-### Invoke Lambda function deployed using IntelliJ.
-You can invoke the Lambda Function from the `project's root` directory using CURL:
-```bash
-curl -H "Content-Type: application/json" "http://localhost:8080/findById" \
-  -d @functions/device-read-function/src/test/resources/requests/valid/lambda-valid-id-request.json
-  
-curl -H "Content-Type: application/json" "http://localhost:8080/updateStatus" \
-  -d @functions/device-update-function/src/test/resources/requests/valid/lambda-valid-id-request.json
-```
+### Invoke Lambda function deployed with IntelliJ.
+Navigate to the `functions/device-read-function/src/test/http/compose.http` file, and execute the requests
+to the deployed function.
 
-**NOTE:** This is used only for local development and testing purposes.
-The other Spring profiles don't have this feature enabled.
+**NOTE:** The `local` profile is used only for local development and testing purposes.
+The other Spring profiles don't have this feature disabled by default.
 
 
 ---
-## Deploying Lambda function Locally using Docker Compose.
+## Deploying Lambda function using Docker Compose.
 To deploy the Lambda Function and LocalStack containers, use the following command from the `project's root` directory:
 ```bash
 docker compose up --build
 ```
 
-### Invoke Lambda function deployed in Docker container.
-The following command will invoke the Lambda Function using CURL from the `project's root` directory:
-```bash
-curl -XPOST "http://localhost:9001/2015-03-31/functions/function/invocations" \
-  -d @functions/device-read-function/src/test/resources/requests/valid/lambda-valid-id-request.json
-  
-curl -XPOST "http://localhost:9002/2015-03-31/functions/function/invocations" \
-  -d @functions/device-update-function/src/test/resources/requests/valid/lambda-valid-id-request.json
-```
+### Invoke Lambda function deployed with Docker Compose.
+Navigate to the `functions/city-read-function/src/test/http/compose.http` file, and execute the requests
+to the deployed function.
 
 ### Invoking EventBridge inside LocalStack:
 The following command will invoke EventBridge using AWS CLI from the `project's root` directory:
@@ -158,6 +148,7 @@ sam delete                  \
   --no-prompts              \
   --profile "city-dev"
 ```
+
 
 ---
 ## Resources

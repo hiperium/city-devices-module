@@ -41,7 +41,7 @@
         <root level="info">
             <appender-ref ref="textAppender"/>
         </root>
-        <logger name="hiperium.city.update.device.function" level="DEBUG" additivity="false">
+        <logger name="hiperium.city.devices.update.function" level="DEBUG" additivity="false">
             <appender-ref ref="jsonAppender"/>
         </logger>
         <logger name="io.awspring.cloud" level="DEBUG" additivity="false">
@@ -59,7 +59,7 @@
     </springProfile>
 
     <springProfile name="test">
-        <logger name="hiperium.city.update.device.function.common.TestContainersBase" level="INFO" additivity="false">
+        <logger name="hiperium.city.devices.update.function.commons.TestContainersBase" level="INFO" additivity="false">
             <appender-ref ref="textAppender"/>
         </logger>
     </springProfile>
@@ -68,7 +68,7 @@
         <root level="info">
             <appender-ref ref="jsonAppender"/>
         </root>
-        <logger name="hiperium.city.update.device.function" level="DEBUG" additivity="false">
+        <logger name="hiperium.city.devices.update.function" level="DEBUG" additivity="false">
             <appender-ref ref="jsonAppender"/>
         </logger>
     </springProfile>

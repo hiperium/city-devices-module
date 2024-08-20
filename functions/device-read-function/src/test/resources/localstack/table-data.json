@@ -7,19 +7,16 @@
             "S": "37f44ed4-b672-4f81-a579-47679c0d6f31"
           },
           "name": {
-            "S": "Device with Enabled City."
+            "S": "Device name."
           },
           "description": {
             "S": "Device description."
           },
-          "deviceStatus": {
+          "status": {
             "S": "OFF"
           },
           "cityId": {
             "S": "a0ecb466-7ef5-47bf-a1ca-12f9f9328528"
-          },
-          "cityStatus": {
-            "S": "ENABLED"
           },
           "version": {
             "N": "1"
@@ -40,19 +37,16 @@
             "S": "37f44ed4-b672-4f81-a579-47679c0d6f32"
           },
           "name": {
-            "S": "Device with Disabled City."
+            "S": "Device name."
           },
           "description": {
             "S": "Device description."
           },
-          "deviceStatus": {
+          "status": {
             "S": "OFF"
           },
           "cityId": {
             "S": "a0ecb466-7ef5-47bf-a1ca-12f9f9328529"
-          },
-          "cityStatus": {
-            "S": "DISABLED"
           },
           "version": {
             "N": "1"

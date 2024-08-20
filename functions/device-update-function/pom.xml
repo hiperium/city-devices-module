@@ -5,7 +5,7 @@
     <parent>
         <groupId>city.hiperium</groupId>
         <artifactId>cities-parent-pom</artifactId>
-        <version>1.0.9</version>
+        <version>1.0.10</version>
         <relativePath/>
     </parent>
 
@@ -15,7 +15,7 @@
     <description>Update Devices according request parameters.</description>
 
     <properties>
-        <start-class>hiperium.city.update.device.function.DeviceUpdateApplication</start-class>
+        <start-class>hiperium.city.devices.update.function.DeviceUpdateApplication</start-class>
     </properties>
 
     <dependencies>

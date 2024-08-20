@@ -1,19 +1,18 @@
 package hiperium.city.devices.read.function.repository;
 
-import hiperium.cities.commons.exceptions.ResourceNotFoundException;
+import hiperium.cities.commons.exceptions.CityException;
 import hiperium.cities.commons.loggers.HiperiumLogger;
-import hiperium.city.devices.read.function.dto.DeviceDataRequest;
+import hiperium.city.devices.read.function.dto.DeviceReadRequest;
 import hiperium.city.devices.read.function.entities.Device;
-import hiperium.city.devices.read.function.mappers.DeviceMapper;
 import org.springframework.stereotype.Repository;
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
-import software.amazon.awssdk.services.dynamodb.model.DynamoDbException;
 import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.GetItemResponse;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * The DevicesRepository class is responsible for retrieving Devices objects from the DynamoDB table.
@@ -27,47 +26,40 @@ public class DevicesRepository {
 
     private static final HiperiumLogger LOGGER = new HiperiumLogger(DevicesRepository.class);
 
-    private final DeviceMapper deviceMapper;
-    private final DynamoDbClient dynamoDbClient;
+    private final DynamoDbAsyncClient dynamoDbAsyncClient;
 
     /**
-     * The DevicesRepository class is responsible for retrieving City objects from the DynamoDB table.
+     * The DevicesRepository class represents a repository for accessing and manipulating device data
+     * in a DynamoDB database.
+     *
+     * @param dynamoDbAsyncClient The DynamoDB asynchronous client used to interact with the database.
+     * @see DynamoDbAsyncClient
      */
-    public DevicesRepository(DeviceMapper deviceMapper, DynamoDbClient dynamoDbClient) {
-        this.deviceMapper = deviceMapper;
-        this.dynamoDbClient = dynamoDbClient;
+    public DevicesRepository(DynamoDbAsyncClient dynamoDbAsyncClient) {
+        this.dynamoDbAsyncClient = dynamoDbAsyncClient;
     }
 
     /**
-     * Finds a Device by its ID and city ID in the DynamoDB table.
+     * Retrieves a device from the DynamoDB table asynchronously based on the provided device data request.
      *
-     * @param deviceDataRequest The request object containing the device ID and city ID.
-     * @return The Device object found in the DynamoDB table.
-     * @throws ResourceNotFoundException if the Device is not found with the specified ID and city ID.
-     * @throws RuntimeException if there is an error finding the Device.
+     * @param deviceReadRequest The device data request containing the device ID and city ID.
+     * @return A CompletableFuture that completes with a Map of item attributes representing the found device.
+     * @throws CityException if an error occurs while retrieving the device.
      */
-    public Device findById(DeviceDataRequest deviceDataRequest) {
-        LOGGER.debug("Find Device by ID", deviceDataRequest);
-
+    public CompletableFuture<Map<String, AttributeValue>> findByIdAsync(DeviceReadRequest deviceReadRequest) {
         HashMap<String, AttributeValue> keyMap = new HashMap<>();
-        keyMap.put(Device.ID_COLUMN_NAME, AttributeValue.builder().s(deviceDataRequest.deviceId()).build());
-        keyMap.put(Device.CITY_ID_COLUMN_NAME, AttributeValue.builder().s(deviceDataRequest.cityId()).build());
+        keyMap.put(Device.ID_COLUMN_NAME, AttributeValue.builder().s(deviceReadRequest.deviceId()).build());
+        keyMap.put(Device.CITY_ID_COLUMN_NAME, AttributeValue.builder().s(deviceReadRequest.cityId()).build());
         GetItemRequest itemRequest = GetItemRequest.builder()
             .key(keyMap)
             .tableName(Device.TABLE_NAME)
             .build();
 
-        Device device;
-        try {
-            Map<String, AttributeValue> returnedItem = this.dynamoDbClient.getItem(itemRequest).item();
-            if (Objects.isNull(returnedItem) || returnedItem.isEmpty()) {
-                throw new ResourceNotFoundException("Device not found with ID: " + deviceDataRequest.deviceId());
-            }
-            device = this.deviceMapper.mapToDevice(returnedItem);
-        } catch (DynamoDbException exception) {
-            LOGGER.error("When trying to find a Device with ID: " + deviceDataRequest.deviceId(), exception.getMessage());
-            throw new RuntimeException("Error finding Device with ID: " + deviceDataRequest.deviceId(), exception);
-        }
-        return device;
+        return this.dynamoDbAsyncClient.getItem(itemRequest)
+            .thenApply(GetItemResponse::item)
+            .exceptionally(exception -> {
+                LOGGER.error("Error when trying to find a Device by ID.", exception.getMessage(), deviceReadRequest);
+                throw new CityException("Error when trying to find a Device by ID.");
+            });
     }
 }
