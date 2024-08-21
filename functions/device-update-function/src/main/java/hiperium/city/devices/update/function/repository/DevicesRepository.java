@@ -96,7 +96,7 @@ public class DevicesRepository {
             .thenRun(() -> LOGGER.info("Successfully updated device status for Device ID: " + device.id()))
             .exceptionally(exception -> {
                 LOGGER.error("Couldn't update device status.", exception.getMessage(), device);
-                throw new RuntimeException("Couldn't update device status.");
+                throw new CityException("Couldn't update device status.");
             });
     }
 }
