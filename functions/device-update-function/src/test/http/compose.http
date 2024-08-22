@@ -5,6 +5,13 @@ Content-Type: application/json
 < ../resources/requests/valid/lambda-valid-id-request.json
 
 
+### Empty City ID
+POST http://localhost:8080/findById
+Content-Type: application/json
+
+< ../resources/requests/invalid/empty-city-id.json
+
+
 ### Empty Device ID
 POST http://localhost:9002/2015-03-31/functions/function/invocations
 Content-Type: application/json
@@ -26,6 +33,13 @@ Content-Type: application/json
 < ../resources/requests/invalid/non-existing-city.json
 
 
+### Wrong City ID
+POST http://localhost:9002/2015-03-31/functions/function/invocations
+Content-Type: application/json
+
+< ../resources/requests/invalid/wrong-city-id.json
+
+
 ### Wrong Device ID
 POST http://localhost:9002/2015-03-31/functions/function/invocations
 Content-Type: application/json
@@ -33,8 +47,15 @@ Content-Type: application/json
 < ../resources/requests/invalid/wrong-device-id.json
 
 
-### Wrong Payload
+### Wrong Payload Event
 POST http://localhost:9002/2015-03-31/functions/function/invocations
 Content-Type: application/json
 
-< ../resources/requests/invalid/wrong-payload.json
+< ../resources/requests/invalid/wrong-payload-event.json
+
+
+### Wrong Payload Lambda
+POST http://localhost:9002/2015-03-31/functions/function/invocations
+Content-Type: application/json
+
+< ../resources/requests/invalid/wrong-payload-lambda.json

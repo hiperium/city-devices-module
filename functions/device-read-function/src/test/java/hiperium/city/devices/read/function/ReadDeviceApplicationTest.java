@@ -1,9 +1,9 @@
-package hiperium.city.devices.update.function;
+package hiperium.city.devices.read.function;
 
-import hiperium.city.devices.update.function.commons.TestContainersBase;
-import hiperium.city.devices.update.function.configurations.FunctionsConfig;
-import hiperium.city.devices.update.function.dto.DeviceUpdateResponse;
-import hiperium.city.devices.update.function.utils.TestsUtils;
+import hiperium.city.devices.read.function.common.TestContainersBase;
+import hiperium.city.devices.read.function.configurations.FunctionConfig;
+import hiperium.city.devices.read.function.dto.ReadDeviceResponse;
+import hiperium.city.devices.read.function.utils.TestsUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -25,8 +25,8 @@ import java.util.function.Function;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ActiveProfiles("test")
-@FunctionalSpringBootTest(classes = DeviceUpdateApplication.class)
-class DeviceUpdateApplicationTest extends TestContainersBase {
+@FunctionalSpringBootTest(classes = ReadDeviceApplication.class)
+class ReadDeviceApplicationTest extends TestContainersBase {
 
     @Autowired
     private DynamoDbAsyncClient dynamoDbAsyncClient;
@@ -44,8 +44,8 @@ class DeviceUpdateApplicationTest extends TestContainersBase {
     @ValueSource(strings = {
         "requests/valid/lambda-valid-id-request.json"
     })
-    void givenValidEvent_whenInvokeLambdaFunction_thenExecuteSuccessfully(String jsonFilePath) throws IOException {
-        Function<Message<byte[]>, Mono<DeviceUpdateResponse>> function = this.getFunctionUnderTest();
+    void givenExistingDeviceAndEnabledCity_whenInvokeLambdaFunction_thenReturnCityData(String jsonFilePath) throws IOException {
+        Function<Message<byte[]>, Mono<ReadDeviceResponse>> function = this.getFunctionUnderTest();
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(jsonFilePath)) {
             assert inputStream != null;
             Message<byte[]> requestMessage = TestsUtils.createMessage(inputStream.readAllBytes());
@@ -53,9 +53,7 @@ class DeviceUpdateApplicationTest extends TestContainersBase {
             StepVerifier.create(function.apply(requestMessage))
                 .assertNext(response -> {
                     assertThat(response).isNotNull();
-                    // The status code should be a success code.
-                    int statusCode = response.statusCode();
-                    assertThat(statusCode >= HttpStatus.OK.value() && statusCode <= HttpStatus.IM_USED.value()).isTrue();
+                    assertThat(response.error()).isNull();
                 })
                 .verifyComplete();
         }
@@ -64,14 +62,15 @@ class DeviceUpdateApplicationTest extends TestContainersBase {
     @ParameterizedTest
     @DisplayName("Non-valid requests")
     @ValueSource(strings = {
+        "requests/invalid/empty-city-id.json",
         "requests/invalid/empty-device-id.json",
         "requests/invalid/wrong-device-id.json",
         "requests/invalid/non-existing-city.json",
         "requests/invalid/non-existing-device.json",
         "requests/invalid/wrong-payload.json"
     })
-    void givenNonValidEvents_whenInvokeLambdaFunction_thenReturnErrors(String jsonFilePath) throws IOException {
-        Function<Message<byte[]>, Mono<DeviceUpdateResponse>> function = this.getFunctionUnderTest();
+    void givenInvalidEvents_whenInvokeLambdaFunction_thenThrowsException(String jsonFilePath) throws IOException {
+        Function<Message<byte[]>, Mono<ReadDeviceResponse>> function = this.getFunctionUnderTest();
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(jsonFilePath)) {
             assert inputStream != null;
             Message<byte[]> requestMessage = TestsUtils.createMessage(inputStream.readAllBytes());
@@ -89,9 +88,9 @@ class DeviceUpdateApplicationTest extends TestContainersBase {
         }
     }
 
-    private Function<Message<byte[]>, Mono<DeviceUpdateResponse>> getFunctionUnderTest() {
-        Function<Message<byte[]>, Mono<DeviceUpdateResponse>> function = this.functionCatalog.lookup(Function.class,
-            FunctionsConfig.UPDATE_STATUS_BEAN_NAME);
+    private Function<Message<byte[]>, Mono<ReadDeviceResponse>> getFunctionUnderTest() {
+        Function<Message<byte[]>, Mono<ReadDeviceResponse>> function = this.functionCatalog.lookup(Function.class,
+            FunctionConfig.FUNCTION_BEAN_NAME);
         assertThat(function).isNotNull();
         return function;
     }

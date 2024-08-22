@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import hiperium.cities.commons.exceptions.ParsingException;
 import hiperium.cities.commons.loggers.HiperiumLogger;
 import hiperium.cities.commons.utils.ExceptionHandlerUtil;
-import hiperium.city.devices.update.function.dto.DeviceUpdateResponse;
+import hiperium.city.devices.update.function.dto.UpdateDeviceResponse;
 import hiperium.city.devices.update.function.dto.EventBridgeRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
@@ -66,15 +66,15 @@ public final class FunctionUtils {
     }
 
     /**
-     * Handles a runtime exception and generates an error response wrapped in a {@code DeviceUpdateResponse} object.
+     * Handles a runtime exception and generates an error response wrapped in a {@code UpdateDeviceResponse} object.
      *
      * @param throwable the runtime exception to handle
-     * @return a Mono emitting the {@code DeviceUpdateResponse} object with the generated error response
+     * @return a Mono emitting the {@code UpdateDeviceResponse} object with the generated error response
      */
-    public static Mono<DeviceUpdateResponse> handleRuntimeException(Throwable throwable) {
+    public static Mono<UpdateDeviceResponse> handleRuntimeException(Throwable throwable) {
         return Mono.just(throwable)
             .map(ExceptionHandlerUtil::generateErrorResponse)
-            .map(errorResponse -> new DeviceUpdateResponse(null, null, errorResponse))
+            .map(errorResponse -> new UpdateDeviceResponse(null, null, errorResponse))
             .doOnNext(deviceUpdateResponse -> LOGGER.debug("Mapped response", deviceUpdateResponse));
     }
 }

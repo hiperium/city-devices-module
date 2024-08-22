@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotEmpty;
 /**
  * Represents a request to retrieve information about a device using its unique identifier.
  */
-public record DeviceReadRequest(
+public record ReadDeviceRequest(
 
     @NotEmpty(message = "Device ID cannot be empty.")
     @NotBlank(message = "Device ID cannot be blank.")

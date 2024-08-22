@@ -2,7 +2,7 @@ package hiperium.city.devices.read.function.repository;
 
 import hiperium.cities.commons.exceptions.CityException;
 import hiperium.cities.commons.loggers.HiperiumLogger;
-import hiperium.city.devices.read.function.dto.DeviceReadRequest;
+import hiperium.city.devices.read.function.dto.ReadDeviceRequest;
 import hiperium.city.devices.read.function.entities.Device;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient;
@@ -42,14 +42,14 @@ public class DevicesRepository {
     /**
      * Retrieves a device from the DynamoDB table asynchronously based on the provided device data request.
      *
-     * @param deviceReadRequest The device data request containing the device ID and city ID.
+     * @param readDeviceRequest The device data request containing the device ID and city ID.
      * @return A CompletableFuture that completes with a Map of item attributes representing the found device.
      * @throws CityException if an error occurs while retrieving the device.
      */
-    public CompletableFuture<Map<String, AttributeValue>> findByIdAsync(DeviceReadRequest deviceReadRequest) {
+    public CompletableFuture<Map<String, AttributeValue>> findByIdAsync(ReadDeviceRequest readDeviceRequest) {
         HashMap<String, AttributeValue> keyMap = new HashMap<>();
-        keyMap.put(Device.ID_COLUMN_NAME, AttributeValue.builder().s(deviceReadRequest.deviceId()).build());
-        keyMap.put(Device.CITY_ID_COLUMN_NAME, AttributeValue.builder().s(deviceReadRequest.cityId()).build());
+        keyMap.put(Device.ID_COLUMN_NAME, AttributeValue.builder().s(readDeviceRequest.deviceId()).build());
+        keyMap.put(Device.CITY_ID_COLUMN_NAME, AttributeValue.builder().s(readDeviceRequest.cityId()).build());
         GetItemRequest itemRequest = GetItemRequest.builder()
             .key(keyMap)
             .tableName(Device.TABLE_NAME)
@@ -58,7 +58,7 @@ public class DevicesRepository {
         return this.dynamoDbAsyncClient.getItem(itemRequest)
             .thenApply(GetItemResponse::item)
             .exceptionally(exception -> {
-                LOGGER.error("Error when trying to find a Device by ID.", exception.getMessage(), deviceReadRequest);
+                LOGGER.error("Error when trying to find a Device by ID.", exception.getMessage(), readDeviceRequest);
                 throw new CityException("Error when trying to find a Device by ID.");
             });
     }

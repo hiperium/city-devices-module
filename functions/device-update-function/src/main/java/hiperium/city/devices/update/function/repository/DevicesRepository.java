@@ -6,9 +6,12 @@ import hiperium.city.devices.update.function.commons.DeviceOperation;
 import hiperium.city.devices.update.function.commons.DeviceStatus;
 import hiperium.city.devices.update.function.dto.EventBridgeDetail;
 import hiperium.city.devices.update.function.entities.Device;
+import lombok.NonNull;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Mono;
 import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.DynamoDbException;
 import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.GetItemResponse;
 import software.amazon.awssdk.services.dynamodb.model.UpdateItemRequest;
@@ -16,6 +19,7 @@ import software.amazon.awssdk.services.dynamodb.model.UpdateItemRequest;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 
 /**
  * The DevicesRepository class is responsible for retrieving Device objects from the DynamoDB table.
@@ -53,6 +57,7 @@ public class DevicesRepository {
         HashMap<String, AttributeValue> keyMap = new HashMap<>();
         keyMap.put(Device.ID_COLUMN_NAME, AttributeValue.builder().s(eventDetail.deviceId()).build());
         keyMap.put(Device.CITY_ID_COLUMN_NAME, AttributeValue.builder().s(eventDetail.cityId()).build());
+
         GetItemRequest itemRequest = GetItemRequest.builder()
             .key(keyMap)
             .tableName(Device.TABLE_NAME)
@@ -69,34 +74,45 @@ public class DevicesRepository {
     /**
      * Updates the status of a device asynchronously.
      *
-     * @param device The device object to update.
-     * @param deviceOperation The operation to perform on the device (ACTIVATE or INACTIVATE).
-     * @return A CompletableFuture representing the completion of the update operation.
-     *         The CompletableFuture will complete normally if the update is successful, and exceptionally if there is an error.
-     * @throws RuntimeException if the device status couldn't be updated.
+     * @param device The device object to update the status for. Must not be null.
+     * @param deviceOperation The device operation that represents the new status. Must not be null.
+     * @return A Mono<Void> representing the completion of the update operation.
+     * @throws IllegalStateException If the DynamoDbAsyncClient is not initialized.
      */
-    public CompletableFuture<Void> updateDeviceStatusAsync(final Device device, final DeviceOperation deviceOperation) {
+    public Mono<Void> updateDeviceStatusAsync(@NonNull final Device device,
+                                              @NonNull final DeviceOperation deviceOperation) {
+        final String deviceId = device.id();
+        final String cityId = device.cityId();
+        final DeviceStatus newDeviceStatus = this.mapDeviceOperationToStatus(deviceOperation);
+
         HashMap<String, AttributeValue> keyMap = new HashMap<>();
-        keyMap.put(Device.ID_COLUMN_NAME, AttributeValue.builder().s(device.id()).build());
-        keyMap.put(Device.CITY_ID_COLUMN_NAME, AttributeValue.builder().s(device.cityId()).build());
+        keyMap.put(Device.ID_COLUMN_NAME, AttributeValue.builder().s(deviceId).build());
+        keyMap.put(Device.CITY_ID_COLUMN_NAME, AttributeValue.builder().s(cityId).build());
 
-        DeviceStatus newDeviceStatus = deviceOperation.equals(DeviceOperation.ACTIVATE) ?
-            DeviceStatus.ON : DeviceStatus.OFF;
+        UpdateItemRequest updateItemRequest = this.createUpdateItemRequest(keyMap, newDeviceStatus);
 
-        UpdateItemRequest itemRequest = UpdateItemRequest.builder()
+        return Mono.justOrEmpty(this.dynamoDbAsyncClient)
+            .flatMap(client -> Mono.fromCompletionStage(client.updateItem(updateItemRequest))
+                .doOnSuccess(response -> LOGGER.info("Successfully updated device status for Device ID: " + deviceId))
+                .doOnError(exception -> LOGGER.error("Couldn't update device status.", exception.getMessage(), device))
+                .onErrorMap(DynamoDbException.class, exception -> new CompletionException("Couldn't update device status.", exception))
+            )
+            .switchIfEmpty(Mono.error(new CityException("DynamoDbAsyncClient is not initialized.")))
+            .then();
+    }
+
+    private DeviceStatus mapDeviceOperationToStatus(DeviceOperation deviceOperation){
+        return deviceOperation.equals(DeviceOperation.ACTIVATE) ? DeviceStatus.ON : DeviceStatus.OFF;
+    }
+
+    private UpdateItemRequest createUpdateItemRequest(final Map<String, AttributeValue> keyMap,
+                                                      final DeviceStatus newDeviceStatus) {
+        return UpdateItemRequest.builder()
             .tableName(Device.TABLE_NAME)
             .key(keyMap)
-            .updateExpression("SET #deviceStatus = :new_status") // Use another field name to avoid reserved keyword.
+            .updateExpression("SET #deviceStatus = :new_status")
             .expressionAttributeNames(Map.of("#deviceStatus", Device.STATUS_COLUMN_NAME))
-            .expressionAttributeValues(Map.of(
-                ":new_status", AttributeValue.builder().s(newDeviceStatus.name()).build()))
+            .expressionAttributeValues(Map.of(":new_status", AttributeValue.builder().s(newDeviceStatus.name()).build()))
             .build();
-
-        return this.dynamoDbAsyncClient.updateItem(itemRequest)
-            .thenRun(() -> LOGGER.info("Successfully updated device status for Device ID: " + device.id()))
-            .exceptionally(exception -> {
-                LOGGER.error("Couldn't update device status.", exception.getMessage(), device);
-                throw new CityException("Couldn't update device status.");
-            });
     }
 }

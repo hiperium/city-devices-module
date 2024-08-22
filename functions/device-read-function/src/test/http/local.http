@@ -5,6 +5,13 @@ Content-Type: application/json
 < ../resources/requests/valid/lambda-valid-id-request.json
 
 
+### Empty City ID
+POST http://localhost:8080/findById
+Content-Type: application/json
+
+< ../resources/requests/invalid/empty-city-id.json
+
+
 ### Empty Device ID
 POST http://localhost:8080/findById
 Content-Type: application/json
@@ -24,6 +31,13 @@ POST http://localhost:8080/findById
 Content-Type: application/json
 
 < ../resources/requests/invalid/non-existing-city.json
+
+
+### Non-existing Device ID
+POST http://localhost:8080/findById
+Content-Type: application/json
+
+< ../resources/requests/invalid/non-existing-device.json
 
 
 ### Wrong Device ID

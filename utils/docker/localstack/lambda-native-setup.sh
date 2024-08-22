@@ -2,7 +2,7 @@
 
 echo ""
 echo "WAITING FOR RESOURCES FROM BUILDER CONTAINER..."
-DATA_FUNCTION_PATH="/var/tmp/devices-data/data-function-assembly.zip"
+DATA_FUNCTION_PATH="/var/tmp/devices-read/data-function-assembly.zip"
 UPDATE_FUNCTION_PATH="/var/tmp/devices-update/update-function-assembly.zip"
 while [ ! -f "$DATA_FUNCTION_PATH" ] || [ ! -f "$UPDATE_FUNCTION_PATH" ]; do
     sleep 3

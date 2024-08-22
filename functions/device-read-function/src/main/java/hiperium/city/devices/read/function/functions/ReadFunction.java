@@ -1,6 +1,6 @@
 package hiperium.city.devices.read.function.functions;
 
-import hiperium.city.devices.read.function.dto.DeviceReadResponse;
+import hiperium.city.devices.read.function.dto.ReadDeviceResponse;
 import hiperium.city.devices.read.function.entities.Device;
 import hiperium.city.devices.read.function.mappers.DeviceMapper;
 import hiperium.city.devices.read.function.services.DevicesService;
@@ -13,7 +13,7 @@ import java.util.function.Function;
 /**
  * Represents a function that finds a device by its identifier.
  */
-public class ReadFunction implements Function<Message<byte[]>, Mono<DeviceReadResponse>> {
+public class ReadFunction implements Function<Message<byte[]>, Mono<ReadDeviceResponse>> {
 
     private final DeviceMapper deviceMapper;
     private final DevicesService devicesService;
@@ -33,10 +33,10 @@ public class ReadFunction implements Function<Message<byte[]>, Mono<DeviceReadRe
      * Applies the ReadFunction to the given request Message and performs a series of operations on it.
      *
      * @param requestMessage the request Message to apply the function to
-     * @return a Mono that emits the resulting DeviceReadResponse
+     * @return a Mono that emits the resulting ReadDeviceResponse
      */
     @Override
-    public Mono<DeviceReadResponse> apply(Message<byte[]> requestMessage) {
+    public Mono<ReadDeviceResponse> apply(Message<byte[]> requestMessage) {
         return Mono.fromCallable(() -> FunctionUtils.deserializeRequest(requestMessage))
             .doOnNext(FunctionUtils::validateRequest)
             .flatMap(this.devicesService::findById)
@@ -44,7 +44,7 @@ public class ReadFunction implements Function<Message<byte[]>, Mono<DeviceReadRe
             .onErrorResume(FunctionUtils::handleRuntimeException);
     }
 
-    private Mono<DeviceReadResponse> mapResponse(Device device) {
+    private Mono<ReadDeviceResponse> mapResponse(Device device) {
         return Mono.fromSupplier(() -> this.deviceMapper.mapToDeviceResponse(device));
     }
 }

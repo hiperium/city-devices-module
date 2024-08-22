@@ -32,6 +32,7 @@ import java.util.List;
  * @see EventBridgeDetail
  */
 public record EventBridgeRequest(
+
     String id,
     String version,
     String source,

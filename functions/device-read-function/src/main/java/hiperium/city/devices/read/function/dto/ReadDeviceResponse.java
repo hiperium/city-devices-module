@@ -6,7 +6,7 @@ import hiperium.city.devices.read.function.common.DeviceStatus;
 /**
  * Represents a response object that contains information about a device.
  */
-public record DeviceReadResponse(
+public record ReadDeviceResponse(
 
     String id,
     String name,

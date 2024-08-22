@@ -5,13 +5,14 @@ import hiperium.cities.commons.dto.ErrorResponse;
 /**
  * Represents a response object for the device update operation.
  */
-public record DeviceUpdateResponse(
+public record UpdateDeviceResponse(
+
     Integer statusCode,
     String body,
     ErrorResponse error) {
 
     /**
-     * The Builder class is a utility class that provides methods for constructing a DeviceUpdateResponse object
+     * The Builder class is a utility class that provides methods for constructing an UpdateDeviceResponse object
      * with various properties.
      */
     public static class Builder {
@@ -20,7 +21,7 @@ public record DeviceUpdateResponse(
         private ErrorResponse error;
 
         /**
-         * Sets the status code of the DeviceUpdateResponse.
+         * Sets the status code of the UpdateDeviceResponse.
          *
          * @param statusCode the status code to be set
          * @return the Builder object with the updated status code
@@ -31,7 +32,7 @@ public record DeviceUpdateResponse(
         }
 
         /**
-         * Sets the body of the DeviceUpdateResponse.
+         * Sets the body of the UpdateDeviceResponse.
          *
          * @param body the body to be set
          * @return the Builder object with the updated body
@@ -53,12 +54,12 @@ public record DeviceUpdateResponse(
         }
 
         /**
-         * Builds a DeviceUpdateResponse object with the provided response code, body, and error.
+         * Builds an UpdateDeviceResponse object with the provided response code, body, and error.
          *
-         * @return A new DeviceUpdateResponse object.
+         * @return A new UpdateDeviceResponse object.
          */
-        public DeviceUpdateResponse build() {
-            return new DeviceUpdateResponse(statusCode, body, error);
+        public UpdateDeviceResponse build() {
+            return new UpdateDeviceResponse(statusCode, body, error);
         }
     }
 }

@@ -2,7 +2,7 @@ package hiperium.city.devices.read.function.services;
 
 import hiperium.cities.commons.exceptions.ResourceNotFoundException;
 import hiperium.cities.commons.loggers.HiperiumLogger;
-import hiperium.city.devices.read.function.dto.DeviceReadRequest;
+import hiperium.city.devices.read.function.dto.ReadDeviceRequest;
 import hiperium.city.devices.read.function.entities.Device;
 import hiperium.city.devices.read.function.mappers.DeviceMapper;
 import hiperium.city.devices.read.function.repository.DevicesRepository;
@@ -36,14 +36,14 @@ public class DevicesService {
     /**
      * Finds a device by its ID.
      *
-     * @param deviceReadRequest The request object containing the device ID and city ID.
+     * @param readDeviceRequest The request object containing the device ID and city ID.
      * @return A Mono that emits the found Device object, or throws a ResourceNotFoundException if no device is found.
      */
-    public Mono<Device> findById(final DeviceReadRequest deviceReadRequest) {
-        return Mono.fromCompletionStage(() -> this.devicesRepository.findByIdAsync(deviceReadRequest))
+    public Mono<Device> findById(final ReadDeviceRequest readDeviceRequest) {
+        return Mono.fromCompletionStage(() -> this.devicesRepository.findByIdAsync(readDeviceRequest))
             .handle((returnedItem, sink) -> {
                 if (Objects.isNull(returnedItem) || returnedItem.isEmpty()) {
-                    LOGGER.error("No device found with the provided ID.", deviceReadRequest);
+                    LOGGER.error("No device found with the provided ID.", readDeviceRequest);
                     sink.error(new ResourceNotFoundException("No device found with the provided ID."));
                     return;
                 }

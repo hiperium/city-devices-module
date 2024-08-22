@@ -15,7 +15,7 @@
     <description>Update Devices according request parameters.</description>
 
     <properties>
-        <start-class>hiperium.city.devices.update.function.DeviceUpdateApplication</start-class>
+        <start-class>hiperium.city.devices.update.function.UpdateDeviceApplication</start-class>
     </properties>
 
     <dependencies>

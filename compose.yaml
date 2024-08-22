@@ -12,7 +12,7 @@ services:
     env_file:
       - utils/docker/lambda.env
     volumes:
-      - devices-data-volume:/var/tmp
+      - devices-read-volume:/var/tmp
     networks:
       - "devices-network"
 
@@ -41,7 +41,7 @@ services:
     env_file:
       - utils/docker/localstack.env
     volumes:
-      - devices-data-volume:/var/tmp/devices-data
+      - devices-read-volume:/var/tmp/devices-read
       - devices-update-volume:/var/tmp/devices-update
       - /var/run/docker.sock:/var/run/docker.sock
       - ./functions/device-read-function/src/test/resources/localstack/table-data.json:/var/lib/localstack/table-data.json
@@ -53,7 +53,7 @@ services:
       - "device-update-function"
 
 volumes:
-  devices-data-volume:
+  devices-read-volume:
   devices-update-volume:
 
 networks:

@@ -9,8 +9,8 @@
 ##
 echo ""
 echo "WAITING FOR DEVICE DATA RESOURCES FROM BUILDER CONTAINER..."
-DATA_FUNCTION_PATH="/var/tmp/devices-data/data-function.jar"
-DATA_DEPENDENCIES_PATH="/var/tmp/devices-data/data-function-libs.zip"
+DATA_FUNCTION_PATH="/var/tmp/devices-read/data-function.jar"
+DATA_DEPENDENCIES_PATH="/var/tmp/devices-read/data-function-libs.zip"
 while [ ! -f "$DATA_FUNCTION_PATH" ] || [ ! -f "$DATA_DEPENDENCIES_PATH" ]; do
     sleep 3
 done

@@ -42,6 +42,17 @@ Parameters:
       - 30
     Description: 'Log retention in days for the functions.'
 
+  AnomalyDetectorEvaluationFrequency:
+    Type: String
+    Default: 'ONE_HOUR'
+    AllowedValues:
+      - FIVE_MIN
+      - TEN_MIN
+      - FIFTEEN_MIN
+      - THIRTY_MIN
+      - ONE_HOUR
+    Description: 'Anomaly detector evaluation frequency in minutes.'
+
 Resources:
   DevicesTable:
     Type: AWS::DynamoDB::Table
@@ -93,6 +104,14 @@ Resources:
           SPRING_PROFILES_ACTIVE: !Ref SpringProfile
     Metadata:
       BuildMethod: makefile
+
+  ReadFunctionLogAnomalyDetector:
+    Type: AWS::Logs::LogAnomalyDetector
+    Properties:
+      LogGroupArnList:
+        - !GetAtt ReadFunctionLogGroup.Arn
+      EvaluationFrequency: !Ref AnomalyDetectorEvaluationFrequency
+      AnomalyVisibilityTime: 21 # days
 
   UpdateFunctionLogGroup:
     Type: AWS::Logs::LogGroup

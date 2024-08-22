@@ -15,7 +15,7 @@
     <description>Provides Device data to internal services in the Hiperium City project.</description>
 
     <properties>
-        <start-class>hiperium.city.devices.read.function.DeviceReadApplication</start-class>
+        <start-class>hiperium.city.devices.read.function.ReadDeviceApplication</start-class>
     </properties>
 
     <dependencies>

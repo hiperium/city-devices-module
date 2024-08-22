@@ -2,7 +2,7 @@ package hiperium.city.devices.read.function.mappers;
 
 import hiperium.cities.commons.loggers.HiperiumLogger;
 import hiperium.city.devices.read.function.common.DeviceStatus;
-import hiperium.city.devices.read.function.dto.DeviceReadResponse;
+import hiperium.city.devices.read.function.dto.ReadDeviceResponse;
 import hiperium.city.devices.read.function.entities.Device;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
@@ -36,13 +36,13 @@ public interface DeviceMapper {
     Device mapToDevice(Map<String, AttributeValue> itemAttributesMap);
 
     /**
-     * Converts a {@link Device} object to a {@link DeviceReadResponse} object with the specified HTTP status and error message.
+     * Converts a {@link Device} object to a {@link ReadDeviceResponse} object with the specified HTTP status and error message.
      *
      * @param device The {@link Device} object to convert.
-     * @return       The converted {@link DeviceReadResponse} object.
+     * @return       The converted {@link ReadDeviceResponse} object.
      */
     @Mapping(target = "error", ignore = true)
-    DeviceReadResponse mapToDeviceResponse(Device device);
+    ReadDeviceResponse mapToDeviceResponse(Device device);
 
     /**
      * Retrieves the string value associated with the specified key from the given attributes map.
@@ -77,13 +77,13 @@ public interface DeviceMapper {
     }
 
     /**
-     * Performs the necessary operations after mapping a Device object to a DeviceReadResponse object.
+     * Performs the necessary operations after mapping a Device object to a ReadDeviceResponse object.
      *
-     * @param response The mapped DeviceReadResponse object.
+     * @param response The mapped ReadDeviceResponse object.
      * @param device   The original Device object.
      */
     @AfterMapping
-    default void afterMapToResponse(@MappingTarget DeviceReadResponse response, Device device) {
+    default void afterMapToResponse(@MappingTarget ReadDeviceResponse response, Device device) {
         LOGGER.debug("Mapped response", response);
     }
 }

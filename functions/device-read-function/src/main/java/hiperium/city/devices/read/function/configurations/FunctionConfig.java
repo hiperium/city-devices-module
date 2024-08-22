@@ -1,7 +1,7 @@
 package hiperium.city.devices.read.function.configurations;
 
 import hiperium.cities.commons.loggers.HiperiumLogger;
-import hiperium.city.devices.read.function.dto.DeviceReadResponse;
+import hiperium.city.devices.read.function.dto.ReadDeviceResponse;
 import hiperium.city.devices.read.function.functions.ReadFunction;
 import hiperium.city.devices.read.function.mappers.DeviceMapper;
 import hiperium.city.devices.read.function.services.DevicesService;
@@ -16,11 +16,11 @@ import java.util.function.Function;
  * This class represents the configuration for functions in the application.
  */
 @Configuration(proxyBeanMethods=false)
-public class FunctionsConfig {
+public class FunctionConfig {
 
-    public static final String FIND_BY_ID_BEAN_NAME = "findById";
+    public static final String FUNCTION_BEAN_NAME = "findById";
 
-    private static final HiperiumLogger LOGGER = new HiperiumLogger(FunctionsConfig.class);
+    private static final HiperiumLogger LOGGER = new HiperiumLogger(FunctionConfig.class);
 
     private final DeviceMapper deviceMapper;
     private final DevicesService devicesService;
@@ -31,7 +31,7 @@ public class FunctionsConfig {
      * @param deviceMapper The DeviceMapper used for mapping device data between different representations.
      * @param devicesService The DevicesService used for working with devices.
      */
-    public FunctionsConfig(DeviceMapper deviceMapper, DevicesService devicesService) {
+    public FunctionConfig(DeviceMapper deviceMapper, DevicesService devicesService) {
         this.deviceMapper = deviceMapper;
         this.devicesService = devicesService;
     }
@@ -41,8 +41,8 @@ public class FunctionsConfig {
      *
      * @return The function that finds a device by its identifier.
      */
-    @Bean(FIND_BY_ID_BEAN_NAME)
-    public Function<Message<byte[]>, Mono<DeviceReadResponse>> findByIdFunction() {
+    @Bean(FUNCTION_BEAN_NAME)
+    public Function<Message<byte[]>, Mono<ReadDeviceResponse>> findByIdFunction() {
         LOGGER.debug("Creating Device Data Function Bean...");
         return new ReadFunction(this.deviceMapper, this.devicesService);
     }
